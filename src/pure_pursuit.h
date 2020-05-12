@@ -3,6 +3,13 @@
 
 #include "types.h"
 
+struct Twist_t
+{
+  double vY;
+  double vX;
+  double vZ;
+};
+
 class PurePursuit
 {
 private:
@@ -19,6 +26,7 @@ private:
 public:
   PurePursuit(/* args */);
   ~PurePursuit();
+  Twist_t pursue();
 };
 
 #endif
