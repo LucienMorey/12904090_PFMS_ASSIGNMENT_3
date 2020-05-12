@@ -1,32 +1,16 @@
-# Prerequisites
-*.d
+# Build Directories
+build/
+*-build/
+build-*/
 
-# Compiled Object files
-*.slo
-*.lo
-*.o
-*.obj
+# QT Build Artifacts
+CMakeLists.txt.use*
 
-# Precompiled Headers
-*.gch
-*.pch
+#VS Code Artifacts
+ipch/
 
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
+# MATLAB 
+*.m~
 
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
-
-# Executables
-*.exe
-*.out
-*.app
+# vscode files
+.vscode/
