@@ -1,21 +1,13 @@
 #ifndef PUREPURSUIT_H
 #define PUREPURSUIT_H
 
-class pure_pursuit
+class PurePursuit
 {
 private:
   /* data */
 public:
-  pure_pursuit(/* args */);
-  ~pure_pursuit();
+  PurePursuit(/* args */);
+  ~PurePursuit();
 };
-
-pure_pursuit::pure_pursuit(/* args */)
-{
-}
-
-pure_pursuit::~pure_pursuit()
-{
-}
 
 #endif

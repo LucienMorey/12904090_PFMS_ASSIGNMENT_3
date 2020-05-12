@@ -1,9 +1,9 @@
 #include "pure_pursuit.h"
 
-pure_pursuit::pure_pursuit(/* args */)
+PurePursuit::PurePursuit(/* args */)
 {
 }
 
-pure_pursuit::~pure_pursuit()
+PurePursuit::~PurePursuit()
 {
 }
