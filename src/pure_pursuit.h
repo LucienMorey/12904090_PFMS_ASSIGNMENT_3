@@ -14,7 +14,7 @@ class PurePursuit
 {
 private:
   /* data */
-  GlobalOrd target_position_;
+  Pose target_pose_;
 
   unsigned int max_g_;
 
@@ -27,6 +27,8 @@ public:
   PurePursuit(/* args */);
   ~PurePursuit();
   Twist_t pursue();
+
+  void setTargetPose(const Pose& target_pose);
 };
 
 #endif
