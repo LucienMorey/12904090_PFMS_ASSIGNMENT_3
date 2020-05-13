@@ -14,7 +14,8 @@ class path_tracker
 {
 protected:
   const double LINEAR_TOLERANCE = 200.0;
-  const double ANGULAR_TOLERANCE = M_PI / 36;
+  const double LARGE_ANGULAR_TOLERANCE = M_PI / 4;
+  const double SMALL_ANGULAR_TOLERANCE = M_PI / 18;
 
   const unsigned int MAX_G = 6;
 

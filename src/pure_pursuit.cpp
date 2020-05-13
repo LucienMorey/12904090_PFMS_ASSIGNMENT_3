@@ -27,36 +27,48 @@ Twist_t PurePursuit::track(const Pose& current_pose, const Pose& target_pose)
   heading_to_target = atan2(sin(heading_to_target - current_orientation), cos(heading_to_target - current_orientation));
 
   // std::cout << "friendly heading " << current_pose.orientation << " target heading " << target_pose.orientation
-  //           << " heading to target " << heading_to_target << std::endl;
+  //          << " heading to target " << heading_to_target << std::endl;
 
-  if (abs(heading_to_target) > ANGULAR_TOLERANCE)
+  if (fabs(heading_to_target) > LARGE_ANGULAR_TOLERANCE)
   {
     vY = MIN_LINEAR_VELOCITY;
-    vZ = heading_to_target * ANGULAR_KP;
-    vZ = std::min(vZ, (6 * 9.81) / vY);
-    vZ = std::max(vZ, -(6 * 9.81 / vY));
-    // if (heading_to_target < 0)
-    // {
-    //   vZ = -(6 * 9.81) / vY;
-    // }
-    // else
-    // {
-    //   vZ = (6 * 9.81) / vY;
-    // }
+    if (heading_to_target < 0)
+    {
+      vZ = -(6 * 9.81) / vY;
+    }
+    else
+    {
+      vZ = (6 * 9.81) / vY;
+    }
+
+    std::cout << "far" << std::endl;
+  }
+  else if (fabs(heading_to_target) > SMALL_ANGULAR_TOLERANCE)
+  {
+    vY = MIN_LINEAR_VELOCITY;
+    if (heading_to_target < 0)
+    {
+      vZ = heading_to_target * ANGULAR_KP;
+    }
+    else
+    {
+      vZ = ANGULAR_KP;
+    }
+    std::cout << "closer" << std::endl;
   }
   else
   {
-    vY = 900.0;
-    vZ = 0;
+    vX = 0;
 
-    // vZ = vY * gamma;
+    vY = look_ahead * LINEAR_KP;
 
+    std::cout << "before " << vY << std::endl;
     vY = std::max(vY, MIN_LINEAR_VELOCITY);
     vY = std::min(vY, MAX_LINEAR_VELOCITY);
-    vY = std::min(vY, fabs((6.0 * 9.81) / vZ));
-  }
 
-  std::cout << "vy " << vY << " vz " << vZ << std::endl;
+    vZ = 0;
+    std::cout << "after " << vY << " vZ " << vZ << std::endl;
+  }
 
   return Twist_t{ vX, vY, vZ };
 }

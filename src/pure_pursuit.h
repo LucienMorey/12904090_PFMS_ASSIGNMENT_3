@@ -8,8 +8,8 @@ class PurePursuit : public path_tracker
 private:
   /* data */
 
-  double LINEAR_KP = 0.5;
-  double ANGULAR_KP = 1.5;
+  double LINEAR_KP = 0.9;
+  double ANGULAR_KP = 0.8;
 
 public:
   PurePursuit();
