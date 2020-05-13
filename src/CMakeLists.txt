@@ -36,11 +36,11 @@ link_directories(${SIMULATOR_LIB_HOME})
 
 ####################################################################################################################
 
-add_library(pursuit pure_pursuit.cpp)
-set_target_properties(pursuit PROPERTIES PUBLIC_HEADER "pure_pursuit.h")
+add_library(tracking pure_pursuit.cpp)
+set_target_properties(tracking PROPERTIES PUBLIC_HEADER "path_tracker.h; pure_pursuit.h")
 
 # Here we declare a C++ executable with only one cpp forming part of it, you will need to change to cater for more files.
 add_executable(${PROJECT_NAME} main.cpp)
 
 # Link the library
-target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS} simulator)
+target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS} simulator tracking)
