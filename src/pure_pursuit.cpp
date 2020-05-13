@@ -1,5 +1,6 @@
 #include "pure_pursuit.h"
 #include <iostream>
+#include <algorithm>
 
 PurePursuit::PurePursuit(/* args */)
 {
@@ -22,10 +23,13 @@ Twist_t PurePursuit::track(const Pose& current_pose, const Pose& target_pose)
 
   double vZ = vY * gamma;
 
-  if ((vY * vZ) / 9.81 > 6)
+  vY = std::max(vY, MIN_LINEAR_VELOCITY);
+  vY = std::min(vY, MAX_LINEAR_VELOCITY);
+
+  if (((vY * vZ) / 9.81) > 6)
   {
     vY = MIN_LINEAR_VELOCITY;
-    vZ = 1.0;
+    vZ = target_pose.orientation - current_pose.orientation * 0.001;
   }
 
   return Twist_t{ vX, vY, vZ };
