@@ -14,7 +14,7 @@ private:
 public:
   PurePursuit();
   ~PurePursuit();
-  Twist_t pursue(const Pose& current_pose, const Pose& target_pose);
+  Twist_t track(const Pose& current_pose, const Pose& target_pose);
 };
 
 #endif

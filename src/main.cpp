@@ -12,6 +12,8 @@
 #include <iostream>
 #include "simulator.h"
 
+#include "pure_pursuit.h"
+
 // For example purposes only, this thread attmps to get the friendly aircraft's
 //(red triangle) pose every 4 seconds. It plots this pose on the
 // simulation (blue triangle) which stays on the image for 1 second, as per the
@@ -38,15 +40,17 @@ void exampleThread(const std::shared_ptr<Simulator>& sim)
 // This thread will simply get the current velocity and feed it back into
 // controlled velocity, at the designated minimum time required (watchdog time) refer
 //'controlFriendly()' documentation in the simualtor class.
-void controlThread(const std::shared_ptr<Simulator>& sim)
+void controlThread(const std::shared_ptr<Simulator>& sim, const std::shared_ptr<path_tracker>& tracker)
 {
   while (true)
   {
     // Feed the watchdog control timer
-    double lin = sim->getFriendlyLinearVelocity();
-    double ang = sim->getFriendlyAngularVelocity();
+    Twist_t next_twist = tracker->track(sim->getFriendlyPose(), Pose{ { 5000, 400 }, 2.0 });
 
-    sim->controlFriendly(lin, ang);
+    std::cout << "error :" << next_twist.vY << " velocity: " << next_twist.vZ << std::endl;
+
+    sim->controlFriendly(next_twist.vY, next_twist.vZ);
+
     std::this_thread::sleep_for(std::chrono::milliseconds(50));
   }
 }
@@ -57,9 +61,10 @@ int main(void)
 
   // Create a shared pointer for the simulator class
   std::shared_ptr<Simulator> sim(new Simulator());
+  std::shared_ptr<path_tracker> tracker(new PurePursuit());
   threads.push_back(sim->spawn());
-  threads.push_back(std::thread(controlThread, sim));
-  threads.push_back(std::thread(exampleThread, sim));
+  threads.push_back(std::thread(controlThread, sim, tracker));
+  // threads.push_back(std::thread(exampleThread, sim));
 
   // Join threads and begin!
   for (auto& t : threads)

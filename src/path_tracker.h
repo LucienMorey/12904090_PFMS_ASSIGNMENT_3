@@ -5,8 +5,8 @@
 
 struct Twist_t
 {
-  double vY;
   double vX;
+  double vY;
   double vZ;
 };
 
@@ -24,7 +24,7 @@ protected:
 public:
   path_tracker(){};
 
-  virtual Twist_t track(Pose current_pose, Pose target_pose) = 0;
+  virtual Twist_t track(const Pose& current_pose, const Pose& target_pose) = 0;
 };
 
 #endif
