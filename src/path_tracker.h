@@ -18,7 +18,7 @@ protected:
 
   const unsigned int MAX_G = 6;
 
-  const double MAX_LINEAR_VELOCITY = 90.0;
+  const double MAX_LINEAR_VELOCITY = 900.0;
   const double MIN_LINEAR_VELOCITY = 50.0;
 
 public:

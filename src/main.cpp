@@ -45,11 +45,10 @@ void controlThread(const std::shared_ptr<Simulator>& sim, const std::shared_ptr<
   while (true)
   {
     // Feed the watchdog control timer
-    Twist_t next_twist = tracker->track(sim->getFriendlyPose(), Pose{ { 5000, 400 }, 2.0 });
-
-    std::cout << "error :" << next_twist.vY << " velocity: " << next_twist.vZ << std::endl;
+    Twist_t next_twist = tracker->track(sim->getFriendlyPose(), Pose{ { -2000.00, 100 }, 2.0 });
 
     sim->controlFriendly(next_twist.vY, next_twist.vZ);
+    sim->testPose(std::vector<Pose>(1, { { -2000.0, 100.0 }, 2.0 }));
 
     std::this_thread::sleep_for(std::chrono::milliseconds(50));
   }
