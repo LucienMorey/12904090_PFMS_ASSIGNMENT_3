@@ -9,12 +9,7 @@ private:
   /* data */
 
   double LINEAR_KP = 1.0;
-  double ANGULAR_KD = 1.0;
-
-  unsigned int max_g_;
-
-  double max_linear_velocity_;
-  double min_linear_velocity_;
+  double ANGULAR_KP = 1.0;
 
 public:
   PurePursuit();

@@ -16,6 +16,11 @@ protected:
   const double LINEAR_TOLERANCE = 200.0;
   const double ANGULAR_TOLERANCE = M_PI / 36;
 
+  const unsigned int MAX_G = 6;
+
+  const double MAX_LINEAR_VELOCITY = 90.0;
+  const double MIN_LINEAR_VELOCITY = 50.0;
+
 public:
   path_tracker(){};
 
