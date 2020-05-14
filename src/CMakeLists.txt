@@ -36,8 +36,9 @@ link_directories(${SIMULATOR_LIB_HOME})
 
 ####################################################################################################################
 
-add_library(tracking pure_pursuit.cpp)
-set_target_properties(tracking PROPERTIES PUBLIC_HEADER "path_tracker.h; pure_pursuit.h")
+add_library(tracking pure_pursuit.cpp estimator.cpp)
+set_target_properties(tracking PROPERTIES PUBLIC_HEADER "path_tracker.h; pure_pursuit.h; estimator.h")
+target_link_libraries(tracking simulator)
 
 # Here we declare a C++ executable with only one cpp forming part of it, you will need to change to cater for more files.
 add_executable(${PROJECT_NAME} main.cpp)

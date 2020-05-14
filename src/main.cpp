@@ -13,6 +13,7 @@
 #include "simulator.h"
 
 #include "pure_pursuit.h"
+#include "estimator.h"
 
 // For example purposes only, this thread attmps to get the friendly aircraft's
 //(red triangle) pose every 4 seconds. It plots this pose on the
