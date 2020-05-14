@@ -4,6 +4,7 @@
 #include "simulator.h"
 #include "types.h"
 #include <chrono>
+#include <condition_variable>
 
 class Estimator
 {
@@ -20,11 +21,16 @@ private:
   std::vector<RangeVelocityStamped> range_velocity_from_tower_old_;
 
   std::mutex friendly_mx_;
+  std::condition_variable friendly_condvar_;
   std::mutex tower_mx_;
+  std::condition_variable tower_condvar_;
 
   AircraftContainer bogies;
 
   void findBogies_();
+
+  const double FRIENDLY_UPDATE_PERIOD = 10.0;
+  const double TOWER_UPDATE_PERIOD = 100.0;
 
 public:
   Estimator(Simulator* simulator);
