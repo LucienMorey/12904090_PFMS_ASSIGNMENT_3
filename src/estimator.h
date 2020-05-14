@@ -14,11 +14,8 @@ private:
   void updateDataFromFriendly_();
   void updateDataFromTower_();
 
-  std::vector<RangeBearingStamped> range_bearings_from_friendly_;
-  std::vector<RangeVelocityStamped> range_velocity_from_tower_;
-
-  std::vector<RangeBearingStamped> range_bearings_from_friendly_old_;
-  std::vector<RangeVelocityStamped> range_velocity_from_tower_old_;
+  std::vector<std::vector<RangeBearingStamped>> range_bearings_from_friendly_;
+  std::vector<std::vector<RangeVelocityStamped>> range_velocity_from_tower_;
 
   std::mutex friendly_mx_;
   std::condition_variable friendly_condvar_;
@@ -31,6 +28,7 @@ private:
 
   const double FRIENDLY_UPDATE_PERIOD = 10.0;
   const double TOWER_UPDATE_PERIOD = 100.0;
+  const unsigned int DATA_SAMPLES_TO_TRACK = 10;
 
 public:
   Estimator(Simulator* simulator);
