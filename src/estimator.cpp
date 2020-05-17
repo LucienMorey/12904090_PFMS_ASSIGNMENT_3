@@ -171,17 +171,17 @@ std::vector<Aircraft> Estimator::triangulateBogies(std::vector<RangeBearingStamp
     for (auto bearing_sample : friendly_data)
     {
       if (velocity_sample.range ==
-          sqrt(pow((friendly_pose.position.y -
+          sqrt(pow((friendly_pose.position.y +
                     bearing_sample.range * sin(friendly_pose.orientation + bearing_sample.bearing)),
                    2) +
-               pow((friendly_pose.position.x -
+               pow((friendly_pose.position.x +
                     bearing_sample.range * cos(friendly_pose.orientation + bearing_sample.bearing)),
                    2)))
       {
         Aircraft bogie;
-        bogie.pose = Pose{ GlobalOrd{ (friendly_pose.position.x -
+        bogie.pose = Pose{ GlobalOrd{ (friendly_pose.position.x +
                                        bearing_sample.range * cos(friendly_pose.orientation + bearing_sample.bearing)),
-                                      (friendly_pose.position.y - bearing_sample.range * sin(friendly_pose.orientation +
+                                      (friendly_pose.position.y + bearing_sample.range * sin(friendly_pose.orientation +
                                                                                              bearing_sample.bearing)) },
                            0.0 };
         bogie.linear_velocity = velocity_sample.velocity;
