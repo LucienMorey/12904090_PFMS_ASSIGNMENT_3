@@ -29,6 +29,7 @@ public:
   static const GlobalOrd BSTATION_LOC;          /*!< The location of the base station */
   static const unsigned int BSTATION_REF_RATE;  /*!< The rate (milliseconds) at which the base station produces range to bogie */
   static const unsigned int FRIENDLY_REF_RATE;  /*!< The rate (milliseconds) at which the friendly produces range to bogie */
+  const std::string library_version = "Version 20.5.16"; /*!< Library version*/
 
   /*! @brief Simulator constructor.
    *
