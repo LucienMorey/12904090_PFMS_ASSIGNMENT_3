@@ -31,8 +31,8 @@ private:
 
   void findBogies_();
 
-  const double FRIENDLY_UPDATE_PERIOD_MS = (1 / Simulator::FRIENDLY_REF_RATE) * 1000;
-  const double TOWER_UPDATE_PERIOD_MS = (1 / Simulator::BSTATION_REF_RATE) * 1000;
+  const int FRIENDLY_UPDATE_PERIOD_MS = Simulator::FRIENDLY_REF_RATE;
+  const int TOWER_UPDATE_PERIOD_MS = Simulator::BSTATION_REF_RATE;
   const unsigned int DATA_SAMPLES_TO_TRACK = 10;
 
 public:
