@@ -14,6 +14,11 @@ private:
   void updateDataFromFriendly_();
   void updateDataFromTower_();
 
+  std::vector<RangeBearingStamped>
+  interpolateRangeBearingData(const std::vector<RangeVelocityStamped>& sample_to_match);
+
+  double interpolate(const double& x, const double& x1, const double& y1, const double& x2, const double& y2);
+
   std::vector<std::vector<RangeBearingStamped>> range_bearings_from_friendly_;
   std::vector<std::vector<RangeVelocityStamped>> range_velocity_from_tower_;
 
@@ -26,8 +31,8 @@ private:
 
   void findBogies_();
 
-  const double FRIENDLY_UPDATE_PERIOD = 10.0;
-  const double TOWER_UPDATE_PERIOD = 100.0;
+  const double FRIENDLY_UPDATE_PERIOD_MS = (1 / Simulator::FRIENDLY_REF_RATE) * 1000;
+  const double TOWER_UPDATE_PERIOD_MS = (1 / Simulator::BSTATION_REF_RATE) * 1000;
   const unsigned int DATA_SAMPLES_TO_TRACK = 10;
 
 public:
