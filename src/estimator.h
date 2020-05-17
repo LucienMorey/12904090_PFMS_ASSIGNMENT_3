@@ -5,38 +5,45 @@
 #include "types.h"
 #include <chrono>
 #include <condition_variable>
+#include <utility>
 
 class Estimator
 {
 private:
   /* data */
-  Simulator* simulator_;
+  std::shared_ptr<Simulator> simulator_;
   void updateDataFromFriendly_();
   void updateDataFromTower_();
+  void determineBogies_();
 
   std::vector<RangeBearingStamped>
   interpolateRangeBearingData(const std::vector<RangeVelocityStamped>& sample_to_match);
 
+  std::vector<Aircraft> triangulateBogies(std::vector<RangeBearingStamped> friendly_data,
+                                          std::vector<RangeVelocityStamped> base_data, Pose friendly_pose);
+
   double interpolate(const double& x, const double& x1, const double& y1, const double& x2, const double& y2);
 
-  std::vector<std::vector<RangeBearingStamped>> range_bearings_from_friendly_;
-  std::vector<std::vector<RangeVelocityStamped>> range_velocity_from_tower_;
+  std::deque<std::vector<RangeBearingStamped>> range_bearings_from_friendly_;
+  std::deque<std::vector<RangeVelocityStamped>> range_velocity_from_tower_;
+  std::deque<Pose> poses_of_friendly_;
 
   std::mutex friendly_mx_;
-  std::condition_variable friendly_condvar_;
   std::mutex tower_mx_;
-  std::condition_variable tower_condvar_;
 
-  AircraftContainer bogies;
+  std::thread friendly_updater;
+  std::thread base_updater;
+  std::thread bogie_estimator;
+
+  AircraftContainer bogies_;
 
   void findBogies_();
 
-  const int FRIENDLY_UPDATE_PERIOD_MS = Simulator::FRIENDLY_REF_RATE;
-  const int TOWER_UPDATE_PERIOD_MS = Simulator::BSTATION_REF_RATE;
-  const unsigned int DATA_SAMPLES_TO_TRACK = 10;
+  const unsigned int TOWER_DATA_SAMPLES_TO_TRACK = 3;
+  const unsigned int FRIENDLY_DATA_SAMPLES_TO_TRACK = 20;
 
 public:
-  Estimator(Simulator* simulator);
+  Estimator(const std::shared_ptr<Simulator>& simulator);
   ~Estimator();
 
   std::vector<Aircraft> getBogies();

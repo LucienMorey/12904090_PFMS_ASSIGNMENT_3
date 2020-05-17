@@ -41,7 +41,7 @@ Twist_t PurePursuit::track(const Pose& current_pose, const Pose& target_pose)
       vZ = (6 * 9.81) / vY;
     }
 
-    std::cout << "far" << std::endl;
+    // std::cout << "far" << std::endl;
   }
   else if (fabs(heading_to_target) > SMALL_ANGULAR_TOLERANCE)
   {
@@ -54,7 +54,7 @@ Twist_t PurePursuit::track(const Pose& current_pose, const Pose& target_pose)
     {
       vZ = ANGULAR_KP;
     }
-    std::cout << "closer" << std::endl;
+    // std::cout << "closer" << std::endl;
   }
   else
   {
@@ -62,12 +62,12 @@ Twist_t PurePursuit::track(const Pose& current_pose, const Pose& target_pose)
 
     vY = look_ahead * LINEAR_KP;
 
-    std::cout << "before " << vY << std::endl;
+    // std::cout << "before " << vY << std::endl;
     vY = std::max(vY, MIN_LINEAR_VELOCITY);
     vY = std::min(vY, MAX_LINEAR_VELOCITY);
 
     vZ = 0;
-    std::cout << "after " << vY << " vZ " << vZ << std::endl;
+    // std::cout << "after " << vY << " vZ " << vZ << std::endl;
   }
 
   return Twist_t{ vX, vY, vZ };

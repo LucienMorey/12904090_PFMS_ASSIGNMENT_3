@@ -19,22 +19,33 @@
 //(red triangle) pose every 4 seconds. It plots this pose on the
 // simulation (blue triangle) which stays on the image for 1 second, as per the
 //'testPose()' documentation in the simualtor class.
-void exampleThread(const std::shared_ptr<Simulator>& sim)
+void exampleThread(const std::shared_ptr<Simulator>& sim, const std::shared_ptr<Estimator>& estimator)
 {
   while (true)
   {
     // Get the friendly aircraft's position and orientation
     Pose pose = sim->getFriendlyPose();
     std::vector<Pose> poses;
-    poses.push_back(pose);
-    sim->testPose(poses);
+    std::vector<Aircraft> bogies = estimator->getBogies();
 
-    std::cout << "[" << sim->elapsed() / 1000 << "s]" << std::endl;
-    std::cout << "Friendly {x, y, orientation}:" << std::endl;
-    std::cout << "  - x: " << pose.position.x << "m" << std::endl;
-    std::cout << "  - y: " << pose.position.y << "m" << std::endl;
-    std::cout << "  - orient: " << pose.orientation * 180 / M_PI << " deg" << std::endl << std::endl;
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    for (auto bogie : bogies)
+    {
+      poses.push_back(bogie.pose);
+    }
+    sim->testPose(poses);
+    poses.clear();
+
+    // std::cout << bogies.size() << std::endl;
+
+    if (bogies.size() > 2)
+    {
+      std::cout << "[" << sim->elapsed() / 1000 << "s]" << std::endl;
+      std::cout << "Friendly {x, y, orientation}:" << std::endl;
+      std::cout << "  - x: " << bogies.front().pose.position.x << "m" << std::endl;
+      std::cout << "  - y: " << bogies.front().pose.position.y << "m" << std::endl;
+      std::cout << "  - orient: " << bogies.front().pose.orientation * 180 / M_PI << " deg" << std::endl << std::endl;
+      std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    }
   }
 }
 
@@ -62,9 +73,10 @@ int main(void)
   // Create a shared pointer for the simulator class
   std::shared_ptr<Simulator> sim(new Simulator());
   std::shared_ptr<path_tracker> tracker(new PurePursuit());
+  std::shared_ptr<Estimator> estimator(new Estimator(sim));
   threads.push_back(sim->spawn());
   threads.push_back(std::thread(controlThread, sim, tracker));
-  // threads.push_back(std::thread(exampleThread, sim));
+  threads.push_back(std::thread(exampleThread, sim, estimator));
 
   // Join threads and begin!
   for (auto& t : threads)
