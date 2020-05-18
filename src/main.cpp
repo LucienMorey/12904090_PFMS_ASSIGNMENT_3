@@ -26,14 +26,14 @@ void exampleThread(const std::shared_ptr<Simulator>& sim, const std::shared_ptr<
     // Get the friendly aircraft's position and orientation
     Pose pose = sim->getFriendlyPose();
     std::vector<Pose> poses;
-    // std::vector<Aircraft> bogies = estimator->getBogies();
+    std::vector<Aircraft> bogies = estimator->getBogies();
 
-    // for (auto bogie : bogies)
-    // {
-    //   poses.push_back(bogie.pose);
-    // }
-    // sim->testPose(poses);
-    // poses.clear();
+    for (auto bogie : bogies)
+    {
+      poses.push_back(bogie.pose);
+    }
+    sim->testPose(poses);
+    poses.clear();
 
     // std::cout << bogies.size() << std::endl;
 
@@ -59,10 +59,10 @@ void controlThread(const std::shared_ptr<Simulator>& sim, const std::shared_ptr<
     // Feed the watchdog control timer
     Twist_t next_twist = tracker->track(sim->getFriendlyPose(), Pose{ { -2000.00, 100 }, 2.0 });
 
-    sim->controlFriendly(50, 0);
+    sim->controlFriendly(next_twist.vY, next_twist.vZ);
     // sim->testPose(std::vector<Pose>(1, { { -2000.0, 100.0 }, 2.0 }));
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    std::this_thread::sleep_for(std::chrono::milliseconds(20));
   }
 }
 
