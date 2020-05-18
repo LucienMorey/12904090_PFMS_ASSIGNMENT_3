@@ -4,8 +4,8 @@
  *
  *  TODO: Add information here
  *
- *  @author {TODO: Your student name + id}
- *  @date {TODO}
+ *  @author Lucien Morey 12904090
+ *  @date 24/5/2020
  */
 #include <thread>
 #include <vector>
