@@ -12,7 +12,6 @@ class Estimator
 {
 private:
   /* data */
-  std::shared_ptr<Simulator> simulator_;
 
   DataUpdater* updater;
 
@@ -25,9 +24,12 @@ private:
   std::vector<Aircraft> triangulateBogies(std::vector<RangeBearingStamped> friendly_data,
                                           std::vector<RangeVelocityStamped> base_data, Pose friendly_pose);
 
-  std::vector<Aircraft> matchBogies(std::vector<std::pair<std::vector<Aircraft>, long>> bogies_over_time);
+  std::vector<Aircraft> matchBogies(std::vector<Aircraft> bogies_t1, std::vector<Aircraft> bogies_t2,
+                                    std::vector<Aircraft> bogies_t3);
 
   double interpolate(const double& x, const double& x1, const double& y1, const double& x2, const double& y2);
+
+  GlobalOrd transformBogietoGlobal(Pose friendly_pose, RangeBearingStamped relative_pos);
 
   std::thread friendly_updater;
   std::thread base_updater;
@@ -37,6 +39,10 @@ private:
 
   void findBogies_();
 
+  const unsigned int CURRENT_INDEX = 0;
+  const unsigned int OLD_INDEX = 1;
+  const unsigned int OLDEST_INDEX = 2;
+
 public:
   Estimator();
   ~Estimator();
@@ -44,8 +50,6 @@ public:
   void setSimulator(const std::shared_ptr<Simulator>& simulator);
 
   std::vector<Aircraft> getBogies();
-
-  GlobalOrd transformBogietoGlobal(Pose friendly_pose, RangeBearingStamped relative_pos);
 };
 
 #endif
