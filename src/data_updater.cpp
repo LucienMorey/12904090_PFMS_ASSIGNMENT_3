@@ -12,6 +12,7 @@ void DataUpdater::updateDataFromFriendly()
 {
   while (1)
   {
+    std::this_thread::sleep_for(std::chrono::milliseconds(30));
     auto temp = simulator_->rangeBearingToBogiesFromFriendly();
 
     std::lock_guard<std::mutex> lock(friendly_mx_);
@@ -27,6 +28,7 @@ void DataUpdater::updateDataFromTower()
 {
   while (1)
   {
+    std::this_thread::sleep_for(std::chrono::milliseconds(30));
     auto temp_friendly_pose = simulator_->getFriendlyPose();
     auto temp_velocity_range = simulator_->rangeVelocityToBogiesFromBase();
 

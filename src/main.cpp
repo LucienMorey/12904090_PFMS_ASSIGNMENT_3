@@ -26,26 +26,26 @@ void exampleThread(const std::shared_ptr<Simulator>& sim, const std::shared_ptr<
     // Get the friendly aircraft's position and orientation
     Pose pose = sim->getFriendlyPose();
     std::vector<Pose> poses;
-    std::vector<Aircraft> bogies = estimator->getBogies();
+    // std::vector<Aircraft> bogies = estimator->getBogies();
 
-    for (auto bogie : bogies)
-    {
-      poses.push_back(bogie.pose);
-    }
-    sim->testPose(poses);
-    poses.clear();
+    // for (auto bogie : bogies)
+    // {
+    //   poses.push_back(bogie.pose);
+    // }
+    // sim->testPose(poses);
+    // poses.clear();
 
     // std::cout << bogies.size() << std::endl;
 
-    if (bogies.size() > 2)
-    {
-      std::cout << "[" << sim->elapsed() / 1000 << "s]" << std::endl;
-      std::cout << "Friendly {x, y, orientation}:" << std::endl;
-      std::cout << "  - x: " << bogies.front().pose.position.x << "m" << std::endl;
-      std::cout << "  - y: " << bogies.front().pose.position.y << "m" << std::endl;
-      std::cout << "  - orient: " << bogies.front().pose.orientation * 180 / M_PI << " deg" << std::endl << std::endl;
-      std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    }
+    // if (bogies.size() > 2)
+    // {
+    //   std::cout << "[" << sim->elapsed() / 1000 << "s]" << std::endl;
+    //   std::cout << "Friendly {x, y, orientation}:" << std::endl;
+    //   std::cout << "  - x: " << bogies.front().pose.position.x << "m" << std::endl;
+    //   std::cout << "  - y: " << bogies.front().pose.position.y << "m" << std::endl;
+    //   std::cout << "  - orient: " << bogies.front().pose.orientation * 180 / M_PI << " deg" << std::endl <<
+    //   std::endl; std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    // }
   }
 }
 
@@ -59,8 +59,8 @@ void controlThread(const std::shared_ptr<Simulator>& sim, const std::shared_ptr<
     // Feed the watchdog control timer
     Twist_t next_twist = tracker->track(sim->getFriendlyPose(), Pose{ { -2000.00, 100 }, 2.0 });
 
-    sim->controlFriendly(next_twist.vY, next_twist.vZ);
-    sim->testPose(std::vector<Pose>(1, { { -2000.0, 100.0 }, 2.0 }));
+    sim->controlFriendly(50, 0);
+    // sim->testPose(std::vector<Pose>(1, { { -2000.0, 100.0 }, 2.0 }));
 
     std::this_thread::sleep_for(std::chrono::milliseconds(50));
   }
@@ -73,7 +73,8 @@ int main(void)
   // Create a shared pointer for the simulator class
   std::shared_ptr<Simulator> sim(new Simulator());
   std::shared_ptr<path_tracker> tracker(new PurePursuit());
-  std::shared_ptr<Estimator> estimator(new Estimator(sim));
+  std::shared_ptr<Estimator> estimator(new Estimator());
+  estimator->setSimulator(sim);
   threads.push_back(sim->spawn());
   threads.push_back(std::thread(controlThread, sim, tracker));
   threads.push_back(std::thread(exampleThread, sim, estimator));
