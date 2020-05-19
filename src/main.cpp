@@ -16,7 +16,11 @@
 #include "estimator.h"
 
 void plannerThread(const std::shared_ptr<Simulator>& sim, const std::shared_ptr<Estimator>& estimator);
-void controlThread(const std::shared_ptr<Simulator>& sim, const std::shared_ptr<path_tracker>& tracker);
+void controlThread(const std::shared_ptr<Simulator>& sim, const std::shared_ptr<path_tracker>& tracker,
+                   const std::shared_ptr<Estimator>& estimator);
+
+std::vector<Pose> poses;
+std::mutex mx;
 
 int main(void)
 {
@@ -32,7 +36,7 @@ int main(void)
 
   // spawn sim and start planning/control threads
   threads.push_back(sim->spawn());
-  threads.push_back(std::thread(controlThread, sim, tracker));
+  threads.push_back(std::thread(controlThread, sim, tracker, estimator));
   threads.push_back(std::thread(plannerThread, sim, estimator));
 
   // Join threads and begin!
@@ -49,7 +53,8 @@ void plannerThread(const std::shared_ptr<Simulator>& sim, const std::shared_ptr<
   while (true)
   {
     // plot current bogie poses from estimator
-    std::vector<Pose> poses;
+    std::unique_lock<std::mutex> lock(mx);
+    poses.push_back(sim->getFriendlyPose());
     std::vector<Aircraft> bogies = estimator->getBogies();
 
     for (auto bogie : bogies)
@@ -57,22 +62,42 @@ void plannerThread(const std::shared_ptr<Simulator>& sim, const std::shared_ptr<
       poses.push_back(bogie.pose);
     }
     sim->testPose(poses);
+    lock.unlock();
 
+    if (poses.size() > 1)
+    {
+      while (1)
+        ;
+    }
     // slow the thread to see bogie readings
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
   }
 }
 
-void controlThread(const std::shared_ptr<Simulator>& sim, const std::shared_ptr<path_tracker>& tracker)
+void controlThread(const std::shared_ptr<Simulator>& sim, const std::shared_ptr<path_tracker>& tracker,
+                   const std::shared_ptr<Estimator>& estimator)
 {
+  Pose init_pose = sim->getFriendlyPose();
   while (true)
   {
     // Feed the watchdog control timer
-    Twist_t next_twist = tracker->track(sim->getFriendlyPose(), Pose{ { -2000.00, 100 }, 2.0 });
-
-    sim->controlFriendly(next_twist.vY, next_twist.vZ);
+    Twist_t next_twist;
+    std::vector<Pose> poses = { init_pose, { { 1000, 3000 }, 0.0 } };
+    sim->testPose(poses);
+    std::unique_lock<std::mutex> lock(mx);
+    if (poses.size() > 1)
+    {
+      next_twist =
+          tracker->track(sim->getFriendlyPose(), sim->getFriendlyLinearVelocity(), init_pose, { { 1000, 3000 }, 0.0 });
+    }
+    else
+    {
+      next_twist = { 50, 0, 0 };
+    }
+    lock.unlock();
+    sim->controlFriendly(next_twist.vX, next_twist.vZ);
     // sim->testPose(std::vector<Pose>(1, { { -2000.0, 100.0 }, 2.0 }));
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(20));
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
   }
 }
