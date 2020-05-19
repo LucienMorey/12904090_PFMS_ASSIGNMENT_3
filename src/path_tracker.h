@@ -13,19 +13,19 @@ struct Twist_t
 class path_tracker
 {
 protected:
-  const double LINEAR_TOLERANCE = 200.0;
-  const double LARGE_ANGULAR_TOLERANCE = M_PI / 4;
-  const double SMALL_ANGULAR_TOLERANCE = M_PI / 18;
+  const double LARGE_ANGULAR_TOLERANCE = M_PI / 2;
 
-  const unsigned int MAX_G = 6;
-
-  const double MAX_LINEAR_VELOCITY = 900.0;
   const double MIN_LINEAR_VELOCITY = 50.0;
+  const double MAX_LINEAR_VELOCITY = 900.0;
+  const double MAX_G = 6.0;
+  const double G = 9.81;
+  const double MAX_ANGLE_VELOCITY = G * MAX_G / MIN_LINEAR_VELOCITY;
 
 public:
   path_tracker(){};
 
-  virtual Twist_t track(const Pose& current_pose, const Pose& target_pose) = 0;
+  virtual Twist_t track(const Pose& current_pose, double current_velocity, const Pose& initial_pose,
+                        const Pose& target_pose) = 0;
 };
 
 #endif
