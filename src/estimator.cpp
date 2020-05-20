@@ -46,9 +46,9 @@ void Estimator::determineBogies_()
     std::deque<Pose> friendly_poses = updater->getFriendlyPoseData();
 
     // transform to global
-    std::vector<GlobalOrd> range_bogies_global_t1;
-    std::vector<GlobalOrd> range_bogies_global_t2;
-    std::vector<GlobalOrd> range_bogies_global_t3;
+    std::vector<GlobalOrdStamped> range_bogies_global_t1;
+    std::vector<GlobalOrdStamped> range_bogies_global_t2;
+    std::vector<GlobalOrdStamped> range_bogies_global_t3;
 
     // using the triangulated data match position and velocity to determine full pose data
     std::vector<Aircraft> bogies_with_heading =
@@ -60,9 +60,9 @@ void Estimator::determineBogies_()
   }
 }
 
-std::vector<Aircraft> Estimator::matchBogies(std::vector<GlobalOrd> range_bogies_global_t1,
-                                             std::vector<GlobalOrd> range_bogies_global_t2,
-                                             std::vector<GlobalOrd> range_bogies_global_t3)
+std::vector<Aircraft> Estimator::matchBogies(std::vector<GlobalOrdStamped> range_bogies_global_t1,
+                                             std::vector<GlobalOrdStamped> range_bogies_global_t2,
+                                             std::vector<GlobalOrdStamped> range_bogies_global_t3)
 {
   std::vector<Aircraft> matched_bogies;
 

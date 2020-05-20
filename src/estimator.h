@@ -17,9 +17,9 @@ private:
 
   void determineBogies_();
 
-  std::vector<Aircraft> matchBogies(std::vector<GlobalOrd> range_bogies_global_t1,
-                                    std::vector<GlobalOrd> range_bogies_global_t2,
-                                    std::vector<GlobalOrd> range_bogies_global_t3);
+  std::vector<Aircraft> matchBogies(std::vector<GlobalOrdStamped> range_bogies_global_t1,
+                                    std::vector<GlobalOrdStamped> range_bogies_global_t2,
+                                    std::vector<GlobalOrdStamped> range_bogies_global_t3);
 
   GlobalOrd transformBogietoGlobal(Pose friendly_pose, RangeBearingStamped relative_pos);
 
