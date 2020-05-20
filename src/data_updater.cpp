@@ -12,8 +12,8 @@ void DataUpdater::updateDataFromFriendly()
 {
   while (1)
   {
-    auto temp_friendly_pose = simulator_->getFriendlyPose();
     auto temp = simulator_->rangeBearingToBogiesFromFriendly();
+    auto temp_friendly_pose = simulator_->getFriendlyPose();
 
     std::lock_guard<std::mutex> lock(friendly_mx_);
     range_bearings_from_friendly_.push_front(temp);
