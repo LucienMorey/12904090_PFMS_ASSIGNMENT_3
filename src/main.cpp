@@ -57,18 +57,21 @@ void plannerThread(const std::shared_ptr<Simulator>& sim, const std::shared_ptr<
     // poses.push_back(sim->getFriendlyPose());
     std::vector<Aircraft> bogies = estimator->getBogies();
 
-    poses.push_back(sim->getFriendlyPose());
-
-    for (auto bogie : bogies)
+    if (bogies.size() > 2)
     {
-      poses.push_back(bogie.pose);
+      poses.clear();
+      poses.push_back(sim->getFriendlyPose());
+
+      for (auto bogie : bogies)
+      {
+        poses.push_back(bogie.pose);
+      }
     }
     sim->testPose(poses);
 
     lock.unlock();
     // slow the thread to see bogie readings
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    poses.clear();
   }
 }
 

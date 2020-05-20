@@ -81,6 +81,12 @@ Twist_t PurePursuit::track(const Pose& current_pose, double current_velocity, co
     linear_velocity = std::min(linear_velocity, MAX_LINEAR_VELOCITY);
     linear_velocity = std::max(linear_velocity, MIN_LINEAR_VELOCITY);
 
+    if ((linear_velocity == NAN) || (angular_velocity == NAN) || (linear_velocity == -NAN) ||
+        (angular_velocity == -NAN))
+    {
+      std::cout << "freakout" << std::endl;
+    }
+
     return Twist_t{ linear_velocity, 0.0, angular_velocity };
   }
   else
