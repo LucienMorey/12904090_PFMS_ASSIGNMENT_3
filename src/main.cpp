@@ -54,7 +54,7 @@ void plannerThread(const std::shared_ptr<Simulator>& sim, const std::shared_ptr<
   {
     // plot current bogie poses from estimator
     std::unique_lock<std::mutex> lock(mx);
-    poses.push_back(sim->getFriendlyPose());
+    // poses.push_back(sim->getFriendlyPose());
     std::vector<Aircraft> bogies = estimator->getBogies();
 
     for (auto bogie : bogies)
@@ -62,13 +62,8 @@ void plannerThread(const std::shared_ptr<Simulator>& sim, const std::shared_ptr<
       poses.push_back(bogie.pose);
     }
     sim->testPose(poses);
+    poses.clear();
     lock.unlock();
-
-    if (poses.size() > 1)
-    {
-      while (1)
-        ;
-    }
     // slow the thread to see bogie readings
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
   }
@@ -83,12 +78,12 @@ void controlThread(const std::shared_ptr<Simulator>& sim, const std::shared_ptr<
     // Feed the watchdog control timer
     Twist_t next_twist;
     std::vector<Pose> poses = { init_pose, { { 1000, 3000 }, 0.0 } };
-    sim->testPose(poses);
+    // sim->testPose(poses);
     std::unique_lock<std::mutex> lock(mx);
     if (poses.size() > 1)
     {
       next_twist =
-          tracker->track(sim->getFriendlyPose(), sim->getFriendlyLinearVelocity(), init_pose, { { 1000, 3000 }, 0.0 });
+          tracker->track(sim->getFriendlyPose(), sim->getFriendlyLinearVelocity(), init_pose, { { 0, 0 }, 0.0 });
     }
     else
     {
