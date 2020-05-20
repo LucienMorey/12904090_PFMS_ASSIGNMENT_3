@@ -75,11 +75,11 @@ Twist_t PurePursuit::track(const Pose& current_pose, double current_velocity, co
     gamma = 2.0 * x / pow(look_ahead, 2);
 
     double angular_velocity = -sign(side) * sqrt(MAX_G * G * fabs(gamma));
-    angular_velocity = std::max(angular_velocity, -MAX_ANGLE_VELOCITY);
-    angular_velocity = std::min(angular_velocity, MAX_ANGLE_VELOCITY);
+    angular_velocity = fmax(angular_velocity, -MAX_ANGLE_VELOCITY);
+    angular_velocity = fmin(angular_velocity, MAX_ANGLE_VELOCITY);
     double linear_velocity = fabs(angular_velocity / gamma);
-    linear_velocity = std::min(linear_velocity, MAX_LINEAR_VELOCITY);
-    linear_velocity = std::max(linear_velocity, MIN_LINEAR_VELOCITY);
+    linear_velocity = fmin(linear_velocity, MAX_LINEAR_VELOCITY);
+    linear_velocity = fmax(linear_velocity, MIN_LINEAR_VELOCITY);
 
     if ((linear_velocity == NAN) || (angular_velocity == NAN) || (linear_velocity == -NAN) ||
         (angular_velocity == -NAN))
@@ -92,8 +92,8 @@ Twist_t PurePursuit::track(const Pose& current_pose, double current_velocity, co
   else
   {
     double angular_velocity = heading_error * ANGULAR_KP;
-    angular_velocity = std::max(angular_velocity, -MAX_ANGLE_VELOCITY);
-    angular_velocity = std::min(angular_velocity, MAX_ANGLE_VELOCITY);
+    angular_velocity = fmax(angular_velocity, -MAX_ANGLE_VELOCITY);
+    angular_velocity = fmin(angular_velocity, MAX_ANGLE_VELOCITY);
     double linear_velocity = MIN_LINEAR_VELOCITY;
 
     return Twist_t{ linear_velocity, 0.0, angular_velocity };
@@ -191,8 +191,8 @@ GlobalOrd PurePursuit::point_line_perpendicular_d(GlobalOrd segment_begin, Globa
 
   double t = unit_line_vector.x * scaled_point_vector.x + unit_line_vector.y * scaled_point_vector.y;
 
-  t = std::min(1.0, t);
-  t = std::max(0.0, t);
+  t = fmin(1.0, t);
+  t = fmax(0.0, t);
 
   GlobalOrd nearest_point = { segment_begin.x + t * (segment_end.x - segment_begin.x),
                               segment_begin.y + t * (segment_end.y - segment_begin.y) };
