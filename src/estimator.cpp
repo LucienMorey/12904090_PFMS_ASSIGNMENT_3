@@ -160,11 +160,9 @@ GlobalOrdStamped Estimator::transformBogietoGlobal(Pose friendly_pose, RangeBear
 {
   // return global co-ords of bogie relative to friendly
 
-  GlobalOrdStamped global = {
+  return GlobalOrdStamped{
     { friendly_pose.position.x + relative_pos.range * cos(relative_pos.bearing + friendly_pose.orientation),
       friendly_pose.position.y + relative_pos.range * sin(relative_pos.bearing + friendly_pose.orientation) },
     relative_pos.timestamp
   };
-
-  return global;
 }

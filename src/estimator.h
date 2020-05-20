@@ -11,8 +11,6 @@
 class Estimator
 {
 private:
-  /* data */
-
   DataUpdater* updater;
 
   void determineBogies_();
@@ -27,8 +25,6 @@ private:
   std::thread bogie_estimator;
 
   AircraftContainer bogies_;
-
-  void findBogies_();
 
   const unsigned int CURRENT_TIME_INDEX = 0;
   const unsigned int OLD_TIME_INDEX = 1;
