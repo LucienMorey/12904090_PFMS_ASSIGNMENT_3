@@ -43,6 +43,7 @@ void Estimator::determineBogies_()
 
     // get stored range_bearing data from bogie
     std::deque<std::vector<RangeBearingStamped>> range_bearing = updater->getRangeBearingData();
+    std::deque<Pose> friendly_poses = updater->getFriendlyPoseData();
 
     // transform to global
     std::vector<GlobalOrd> range_bogies_global_t1;

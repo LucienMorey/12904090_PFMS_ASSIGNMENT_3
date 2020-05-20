@@ -28,7 +28,7 @@ public:
   std::deque<Pose> getFriendlyPoseData();
 
   const unsigned int TOWER_DATA_SAMPLES_TO_TRACK = 3;
-  const unsigned int FRIENDLY_DATA_SAMPLES_TO_TRACK = 25;
+  const unsigned int FRIENDLY_DATA_SAMPLES_TO_TRACK = 3;
 };
 
 #endif
