@@ -45,10 +45,32 @@ void Estimator::determineBogies_()
     std::deque<std::vector<RangeBearingStamped>> range_bearing = updater->getRangeBearingData();
     std::deque<Pose> friendly_poses = updater->getFriendlyPoseData();
 
-    // transform to global
+    // transform obtained range_bearing_data to position_data
     std::vector<GlobalOrdStamped> range_bogies_global_t1;
+
+    // newest position data
+    for (auto range_bearing_data : range_bearing.at(CURRENT_TIME_INDEX))
+    {
+      range_bogies_global_t1.push_back(
+          transformBogietoGlobal(friendly_poses.at(CURRENT_TIME_INDEX), range_bearing_data));
+    }
+
+    // old position data
     std::vector<GlobalOrdStamped> range_bogies_global_t2;
+
+    for (auto range_bearing_data : range_bearing.at(OLD_TIME_INDEX))
+    {
+      range_bogies_global_t2.push_back(transformBogietoGlobal(friendly_poses.at(OLD_TIME_INDEX), range_bearing_data));
+    }
+
+    // oldest position data
     std::vector<GlobalOrdStamped> range_bogies_global_t3;
+
+    for (auto range_bearing_data : range_bearing.at(OLDEST_TIME_INDEX))
+    {
+      range_bogies_global_t3.push_back(
+          transformBogietoGlobal(friendly_poses.at(OLDEST_TIME_INDEX), range_bearing_data));
+    }
 
     // using the triangulated data match position and velocity to determine full pose data
     std::vector<Aircraft> bogies_with_heading =
@@ -105,11 +127,12 @@ std::vector<Aircraft> Estimator::matchBogies(std::vector<GlobalOrdStamped> range
   return matched_bogies;
 }
 
-GlobalOrd Estimator::transformBogietoGlobal(Pose friendly_pose, RangeBearingStamped relative_pos)
+GlobalOrdStamped Estimator::transformBogietoGlobal(Pose friendly_pose, RangeBearingStamped relative_pos)
 {
   // return global co-ords of bogie relative to friendly
-  return GlobalOrd{
-    friendly_pose.position.x + relative_pos.range * cos(relative_pos.bearing + friendly_pose.orientation),
-    friendly_pose.position.y + relative_pos.range * sin(relative_pos.bearing + friendly_pose.orientation)
+  return GlobalOrdStamped{
+    { friendly_pose.position.x + relative_pos.range * cos(relative_pos.bearing + friendly_pose.orientation),
+      friendly_pose.position.y + relative_pos.range * sin(relative_pos.bearing + friendly_pose.orientation) },
+    relative_pos.timestamp
   };
 }

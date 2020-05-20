@@ -21,7 +21,7 @@ private:
                                     std::vector<GlobalOrdStamped> range_bogies_global_t2,
                                     std::vector<GlobalOrdStamped> range_bogies_global_t3);
 
-  GlobalOrd transformBogietoGlobal(Pose friendly_pose, RangeBearingStamped relative_pos);
+  GlobalOrdStamped transformBogietoGlobal(Pose friendly_pose, RangeBearingStamped relative_pos);
 
   std::thread friendly_updater;
   std::thread bogie_estimator;
@@ -30,9 +30,9 @@ private:
 
   void findBogies_();
 
-  const unsigned int CURRENT_INDEX = 0;
-  const unsigned int OLD_INDEX = 1;
-  const unsigned int OLDEST_INDEX = 2;
+  const unsigned int CURRENT_TIME_INDEX = 0;
+  const unsigned int OLD_TIME_INDEX = 1;
+  const unsigned int OLDEST_TIME_INDEX = 2;
 
 public:
   Estimator();
