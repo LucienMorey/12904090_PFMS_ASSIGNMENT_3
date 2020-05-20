@@ -39,7 +39,13 @@ struct Pose {
   double orientation; /*!< Orientation (radians) */
 };
 
-struct RangeBearingStamped { /*!< Contains a timestamped range/bearing reading */
+struct GlobalOrdStamped{
+  GlobalOrd position; /*!< Global position (metres) */
+  long timestamp;     /*!< Timestamp (milliseconds) */
+}
+
+struct RangeBearingStamped
+{                     /*!< Contains a timestamped range/bearing reading */
   double range;       /*!< The range (distance reading) in metres */
   double bearing;     /*!< The bearing (bearing reading) in radians */
   long timestamp;     /*!< Timestamp (milliseconds) */
