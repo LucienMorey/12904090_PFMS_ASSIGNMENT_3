@@ -3,26 +3,64 @@
 #include <vector>
 #include <algorithm>
 
+#define private public
+
 // Student defined libraries
 #include "../estimator.h"
+#include "../pure_pursuit.h"
+#include "simulator.h"
 
 using namespace std;
 
 //==================== UNIT TEST START ====================//
 // Test that data measurements are within limits
-TEST(DataDistanceTest, Estimator)
+TEST(PurePursuitTest, circleIntercept)
 {
-  Estimator e;
+  PurePursuit pursuit;
 
-  GlobalOrd test = e.transformBogietoGlobal({ { 1.0, 1.0 }, 0 }, { sqrt(2), (5.0 / 4.0) * M_PI, 10 });
-  GlobalOrd expected = { 0.0, 0.0 };
-  EXPECT_DOUBLE_EQ(expected.x, test.x);
-  EXPECT_DOUBLE_EQ(expected.y, test.y);
+  GlobalOrd segment_begin = { 0.0, 5.0 };
+  GlobalOrd segment_end = { 1.0, 15.0 };
+
+  GlobalOrd expected = { 0.265, 7.654 };
+
+  GlobalOrd current_pose = { 5, 0 };
+  double radius = 9;
+
+  std::vector<GlobalOrd> result = pursuit.line_circle_intercept(segment_begin, segment_end, current_pose, radius);
+  ASSERT_NEAR(expected.x, result.front().x, 0.1);
+  ASSERT_NEAR(expected.y, result.front().y, 0.1);
+}
+
+TEST(PurePursuitTest, minimumDistance)
+{
+  PurePursuit pursuit;
+
+  GlobalOrd segment_begin = { 0.0, 5.0 };
+  GlobalOrd segment_end = { 1.0, 15.0 };
+
+  GlobalOrd expected = { 0.0, 5.0 };
+
+  GlobalOrd current_pose = { 5, 0 };
+  GlobalOrd out = pursuit.point_line_perpendicular_d(segment_begin, segment_end, current_pose);
+
+  ASSERT_NEAR(expected.x, out.x, 0.1);
+  ASSERT_NEAR(expected.y, out.y, 0.1);
+}
+
+TEST(EstimatorTest, TransformBogiesToGlobal)
+{
+  std::shared_ptr<Simulator> sim(new Simulator());
+  // Estimator* e;
+  // e = new Estimator();
+  // e->setSimulator(sim);
+
+  // delete e;
+
+  ASSERT_EQ(1, 1);
 }
 
 int main(int argc, char** argv)
 {
-  shared_ptr<Simulator> sim_(new Simulator());
   ::testing::InitGoogleTest(&argc, argv);
 
   return RUN_ALL_TESTS();

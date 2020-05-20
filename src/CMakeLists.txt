@@ -90,8 +90,8 @@ target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS} simulator tracking)
 ###################################
 # Now the unit test bit!
 # Add the unit test executable aagainst the source code of the test
-#add_executable(estimatorTests test/test_estimator.cpp)
+add_executable(estimatorTests test/test_estimator.cpp)
 # Linking to gtest
-#target_link_libraries(estimatorTests gtest gtest_main)
+target_link_libraries(estimatorTests gtest gtest_main)
 # Link the the library
-#target_link_libraries(estimatorTests ${OpenCV_LIBS} simulator tracking)
+target_link_libraries(estimatorTests ${OpenCV_LIBS} simulator tracking)
