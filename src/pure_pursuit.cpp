@@ -155,7 +155,6 @@ std::vector<GlobalOrd> PurePursuit::line_circle_intercept(GlobalOrd segment_begi
 
   if (intersection_points.size() == 2)
   {
-    std::cout << "t1 " << t1 << " t2 " << t2 << std::endl;
     if (t1 > t2)
     {
       intersection_points.pop_back();
