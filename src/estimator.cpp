@@ -93,28 +93,33 @@ std::vector<Aircraft> Estimator::matchBogies(std::vector<GlobalOrdStamped> range
     {
       for (auto old_sample : range_bogies_global_t2)
       {
+        // calculate the heading from oldest data to old data then old to new data
         double heading_3_to_2 =
             atan2(old_sample.position.y - oldest_sample.position.y, old_sample.position.x - oldest_sample.position.x);
         double heading_2_to_1 =
             atan2(current_sample.position.y - old_sample.position.y, current_sample.position.x - old_sample.position.x);
 
+        // determine the heading error between the line segments
         double heading_error = fabs(heading_2_to_1 - heading_3_to_2);
+
+        // if heading error is above PI then there is a wrapping error and needs to be adjusted
         if (heading_error > M_PI)
         {
           heading_error = 2 * M_PI - heading_error;
         }
 
-        // calculate velocity betwween p3 and p2 && p2 p1
+        // calculate the length of the line segments between oldest and old data then old and new data
         double distance_3_to_2 = sqrt(pow(old_sample.position.x - oldest_sample.position.x, 2) +
                                       pow(old_sample.position.y - oldest_sample.position.y, 2));
 
         double distance_2_to_1 = sqrt(pow(current_sample.position.x - old_sample.position.x, 2) +
                                       pow(current_sample.position.y - old_sample.position.y, 2));
 
-        // if p3 to p2 matches p3 to p1 && p2 p1 mathces p3 to p1
+        // if the headings match and the line segments are approximately equal length then they can be considered
+        // colinear and can be considered from the same bogie
         if ((heading_error < M_PI / 18) && (fabs(distance_3_to_2 - distance_2_to_1) < 450))
         {
-          // calculate an constrain bogie heading to 0-2pi
+          // calculate heading of bogie and constrain to 0-2pi
           double bogie_heading_1 = fmod(atan2((current_sample.position.y - old_sample.position.y),
                                               (current_sample.position.x - old_sample.position.x)) +
                                             2 * M_PI,
@@ -123,18 +128,18 @@ std::vector<Aircraft> Estimator::matchBogies(std::vector<GlobalOrdStamped> range
           // create temp pose for bogie
           Pose bogie_pose = { current_sample.position, bogie_heading_1 };
 
-          // calculate velocity p3 to p1
-          double distance_3_to_1 = sqrt(pow(current_sample.position.x - oldest_sample.position.x, 2) +
-                                        pow(current_sample.position.y - oldest_sample.position.y, 2));
+          // calculate velocity of bogie from oldest to new data
+          double bogie_displacement = sqrt(pow(current_sample.position.x - oldest_sample.position.x, 2) +
+                                           pow(current_sample.position.y - oldest_sample.position.y, 2));
 
           // timestamps are in ms so must be converted to s
-          double time_dif_3_to_1 = (current_sample.timestamp - oldest_sample.timestamp) / 1000.0;
-          double velocity_from_3_to_1 = distance_3_to_1 / time_dif_3_to_1;
+          double time_delta = (current_sample.timestamp - oldest_sample.timestamp) / 1000.0;
+          double bogie_velocity = bogie_displacement / time_delta;
 
           // create and pushback matched bogie to list of bogies
           Aircraft bogie;
           bogie.pose = bogie_pose;
-          bogie.linear_velocity = velocity_from_3_to_1;
+          bogie.linear_velocity = bogie_velocity;
           matched_bogies.push_back(bogie);
           break;
         }
