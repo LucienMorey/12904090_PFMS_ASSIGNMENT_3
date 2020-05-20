@@ -17,22 +17,13 @@ private:
 
   void determineBogies_();
 
-  std::vector<RangeBearingStamped>
-  interpolateRangeBearingData(const std::vector<RangeVelocityStamped>& sample_to_match,
-                              std::deque<std::vector<RangeBearingStamped>> data_to_interp);
-
-  std::vector<Aircraft> triangulateBogies(std::vector<RangeBearingStamped> friendly_data,
-                                          std::vector<RangeVelocityStamped> base_data, Pose friendly_pose);
-
-  std::vector<Aircraft> matchBogies(std::vector<Aircraft> bogies_t1, std::vector<Aircraft> bogies_t2,
-                                    std::vector<Aircraft> bogies_t3);
-
-  double interpolate(const double& x, const double& x1, const double& y1, const double& x2, const double& y2);
+  std::vector<Aircraft> matchBogies(std::vector<GlobalOrd> range_bogies_global_t1,
+                                    std::vector<GlobalOrd> range_bogies_global_t2,
+                                    std::vector<GlobalOrd> range_bogies_global_t3);
 
   GlobalOrd transformBogietoGlobal(Pose friendly_pose, RangeBearingStamped relative_pos);
 
   std::thread friendly_updater;
-  std::thread base_updater;
   std::thread bogie_estimator;
 
   AircraftContainer bogies_;
