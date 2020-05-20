@@ -8,8 +8,8 @@
 // A undirected, weighted graph
 class Graph
 {
-  typedef std::string vertex;
-  typedef unsigned int weight;
+  typedef int vertex;
+  typedef double weight;
 
   // The '_t' notation is used to denote a new type
   typedef std::map<vertex, weight> edges_t;
