@@ -38,9 +38,6 @@ void Estimator::determineBogies_()
   // loop continuously once minimum readings met
   while (1)
   {
-    // slow down thread to avoid constant locking of mutexes
-    std::this_thread::sleep_for(std::chrono::milliseconds(20));
-
     // get stored range_bearing data from bogie
     std::deque<std::vector<RangeBearingStamped>> range_bearing = updater->getRangeBearingData();
     std::deque<Pose> friendly_poses = updater->getFriendlyPoseData();
@@ -87,41 +84,68 @@ std::vector<Aircraft> Estimator::matchBogies(std::vector<GlobalOrdStamped> range
                                              std::vector<GlobalOrdStamped> range_bogies_global_t3)
 {
   std::vector<Aircraft> matched_bogies;
+  int last_size = 0;
 
   // for each current sample loop through all the oldest samples
   for (auto current_sample : range_bogies_global_t1)
   {
     for (auto oldest_sample : range_bogies_global_t3)
     {
-      // calculate velocity p3 to p1
-
       for (auto old_sample : range_bogies_global_t2)
       {
+        double heading_3_to_2 =
+            atan2(old_sample.position.y - oldest_sample.position.y, old_sample.position.x - oldest_sample.position.x);
+        double heading_2_to_1 =
+            atan2(current_sample.position.y - old_sample.position.y, current_sample.position.x - old_sample.position.x);
+
+        double heading_error = fabs(heading_2_to_1 - heading_3_to_2);
+        if (heading_error > M_PI)
+        {
+          heading_error = 2 * M_PI - heading_error;
+        }
+
         // calculate velocity betwween p3 and p2 && p2 p1
+        double distance_3_to_2 = sqrt(pow(old_sample.position.x - oldest_sample.position.x, 2) +
+                                      pow(old_sample.position.y - oldest_sample.position.y, 2));
+
+        double distance_2_to_1 = sqrt(pow(current_sample.position.x - old_sample.position.x, 2) +
+                                      pow(current_sample.position.y - old_sample.position.y, 2));
 
         // if p3 to p2 matches p3 to p1 && p2 p1 mathces p3 to p1
+        if ((heading_error < M_PI / 18) && (fabs(distance_3_to_2 - distance_2_to_1) < 450))
+        {
+          // calculate an constrain bogie heading to 0-2pi
+          double bogie_heading_1 = fmod(atan2((current_sample.position.y - old_sample.position.y),
+                                              (current_sample.position.x - old_sample.position.x)) +
+                                            2 * M_PI,
+                                        2 * M_PI);
 
-        // calculate an constrain bogie heading to 0-2pi
-        // double bogie_heading =
-        //     fmod(atan2((current_sample.pose.position.y - oldest_sample.pose.position.y),
-        //                (current_sample.pose.position.x - oldest_sample.pose.position.x) + 2.0 * M_PI),
-        //          2.0 * M_PI);
+          // create temp pose for bogie
+          Pose bogie_pose = { current_sample.position, bogie_heading_1 };
 
-        // create temp pose for bogie
-        // Pose bogie_pose = { current_sample.pose.position, bogie_heading };
+          // calculate velocity p3 to p1
+          double distance_3_to_1 = sqrt(pow(current_sample.position.x - oldest_sample.position.x, 2) +
+                                        pow(current_sample.position.y - oldest_sample.position.y, 2));
 
-        // create and pushback matched bogie to list of bogies
-        Aircraft bogie;
-        // bogie.pose = bogie_pose;
-        // bogie.linear_velocity = current_sample.linear_velocity;
-        // reset timer to sim time now - newest timestamp
-        // matched_bogies.push_back(bogie);
-        // break;
+          // timestamps are in ms so must be converted to s
+          double time_dif_3_to_1 = (current_sample.timestamp - oldest_sample.timestamp) / 1000.0;
+          double velocity_from_3_to_1 = distance_3_to_1 / time_dif_3_to_1;
+
+          // create and pushback matched bogie to list of bogies
+          Aircraft bogie;
+          bogie.pose = bogie_pose;
+          bogie.linear_velocity = velocity_from_3_to_1;
+          matched_bogies.push_back(bogie);
+          break;
+        }
+      }
+      // if found a match abandon curent new sample and match for next new sample
+      if (matched_bogies.size() > last_size)
+      {
+        last_size++;
+        break;
       }
     }
-
-    // if size grew by 1
-    // break
   }
 
   return matched_bogies;
@@ -130,9 +154,12 @@ std::vector<Aircraft> Estimator::matchBogies(std::vector<GlobalOrdStamped> range
 GlobalOrdStamped Estimator::transformBogietoGlobal(Pose friendly_pose, RangeBearingStamped relative_pos)
 {
   // return global co-ords of bogie relative to friendly
-  return GlobalOrdStamped{
+
+  GlobalOrdStamped global = {
     { friendly_pose.position.x + relative_pos.range * cos(relative_pos.bearing + friendly_pose.orientation),
       friendly_pose.position.y + relative_pos.range * sin(relative_pos.bearing + friendly_pose.orientation) },
     relative_pos.timestamp
   };
+
+  return global;
 }
