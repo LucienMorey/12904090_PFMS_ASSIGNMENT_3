@@ -31,7 +31,7 @@ int main(void)
   std::shared_ptr<Simulator> sim(new Simulator());
   std::shared_ptr<path_tracker> tracker(new PurePursuit());
   std::shared_ptr<Estimator> estimator(new Estimator());
-  std::shared_ptr<TrajectoryPlanner> planner(new TrajectoryPlanner());
+  std::shared_ptr<TrajectoryPlanner> planner(new TrajectoryPlanner(sim));
 
   // set sim in estimator to start estimation
   estimator->setSimulator(sim);
@@ -60,17 +60,21 @@ void plannerThread(const std::shared_ptr<Simulator>& sim, const std::shared_ptr<
     // poses.push_back(sim->getFriendlyPose());
     std::vector<Aircraft> bogies = estimator->getBogies();
 
-    if (bogies.size() > 2)
+    if (bogies.size() == 4)
     {
       std::vector<Aircraft> planes;
       Aircraft friendly;
       friendly.pose = sim->getFriendlyPose();
       friendly.linear_velocity = sim->getFriendlyLinearVelocity();
       planes.push_back(friendly);
+      std::vector<Pose> poses;
       for (auto bogie : bogies)
       {
         planes.push_back(bogie);
+        poses.push_back(bogie.pose);
       }
+
+      // sim->testPose(poses);
 
       planner->plan(planes);
     }
@@ -92,6 +96,7 @@ void controlThread(const std::shared_ptr<Simulator>& sim, const std::shared_ptr<
     if (planner->getPath().size() > 1)
     {
       std::vector<Pose> poses = planner->getPath();
+      sim->testPose(poses);
       next_twist = tracker->track(sim->getFriendlyPose(), sim->getFriendlyLinearVelocity(), poses.front(), poses.at(1));
     }
     else

@@ -3,6 +3,8 @@
 
 #include "types.h"
 #include "graph.h"
+#include "simulator.h"
+#include <iostream>
 
 class TrajectoryPlanner : public Graph
 {
@@ -19,11 +21,13 @@ private:
   std::mutex path_mx_;
   std::vector<Pose> path_;
 
-  const double TIME_PREDICTION_CONSTANT = 1.0;
+  const double TIME_PREDICTION_CONSTANT = 1;
   const unsigned int FRIENDLY_KEY = 0;
 
+  Simulator* sim_;
+
 public:
-  TrajectoryPlanner();
+  TrajectoryPlanner(std::shared_ptr<Simulator> sim);
   ~TrajectoryPlanner();
   std::vector<Pose> getPath();
   void plan(std::vector<Aircraft> aircraft);

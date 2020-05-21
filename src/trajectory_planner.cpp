@@ -1,7 +1,8 @@
 #include "trajectory_planner.h"
 
-TrajectoryPlanner::TrajectoryPlanner(/* args */)
+TrajectoryPlanner::TrajectoryPlanner(std::shared_ptr<Simulator> sim)
 {
+  sim_ = sim.get();
 }
 
 TrajectoryPlanner::~TrajectoryPlanner()
@@ -11,7 +12,9 @@ TrajectoryPlanner::~TrajectoryPlanner()
 void TrajectoryPlanner::plan(std::vector<Aircraft> Aircraft)
 {
   weightedGraph_.clear();
+  planes_.clear();
   int key = 0;
+  std::vector<Pose> poses;
   for (auto plane : Aircraft)
   {
     addVertex(key);
@@ -19,17 +22,20 @@ void TrajectoryPlanner::plan(std::vector<Aircraft> Aircraft)
     key++;
   }
 
-  for (auto planes_key = 1; planes_key != planes_.size() - 1; planes_key++)
+  for (auto planes_key = 1; planes_key != planes_.size(); planes_key++)
   {
-    GlobalOrd point_next_time_step = { planes_.at(planes_key).pose.position.x +
-                                           planes_.at(planes_key).linear_velocity *
-                                               cos(planes_.at(planes_key).pose.orientation) * TIME_PREDICTION_CONSTANT,
-                                       planes_.at(planes_key).pose.position.y +
-                                           planes_.at(planes_key).linear_velocity *
-                                               sin(planes_.at(planes_key).pose.orientation) *
-                                               TIME_PREDICTION_CONSTANT };
+    std::cout << planes_.at(planes_key).timer.elapsed() << std::endl;
+    GlobalOrd point_next_time_step = {
+      planes_.at(planes_key).pose.position.x +
+          planes_.at(planes_key).linear_velocity * cos(planes_.at(planes_key).pose.orientation) *
+              (TIME_PREDICTION_CONSTANT + planes_.at(planes_key).timer.elapsed() / 1000.0),
+      planes_.at(planes_key).pose.position.y +
+          planes_.at(planes_key).linear_velocity * sin(planes_.at(planes_key).pose.orientation) *
+              (TIME_PREDICTION_CONSTANT + planes_.at(planes_key).timer.elapsed() / 1000.0)
+    };
 
     Pose pose_next_time_step = { point_next_time_step, planes_.at(planes_key).pose.orientation };
+    poses.push_back(pose_next_time_step);
 
     planes_.at(planes_key).pose = pose_next_time_step;
 
@@ -59,6 +65,9 @@ void TrajectoryPlanner::plan(std::vector<Aircraft> Aircraft)
       index_to_most_efficient_bogie = i;
     }
   }
+
+  std::cout << poses.size() << std::endl;
+  sim_->testPose(poses);
 
   std::lock_guard<std::mutex> lock(path_mx_);
   path_.clear();
