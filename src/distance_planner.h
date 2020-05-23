@@ -6,7 +6,7 @@
 #include "simulator.h"
 #include <iostream>
 
-class TrajectoryPlanner : public Graph
+class DistancePlanner : public Graph
 {
   struct keyedAircraft
   {
@@ -27,8 +27,8 @@ private:
   Simulator* sim_;
 
 public:
-  TrajectoryPlanner(std::shared_ptr<Simulator> sim);
-  ~TrajectoryPlanner();
+  DistancePlanner(std::shared_ptr<Simulator> sim);
+  ~DistancePlanner();
   std::vector<Pose> getPath();
   void plan(std::vector<Aircraft> aircraft);
 };
