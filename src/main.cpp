@@ -96,7 +96,7 @@ void controlThread(const std::shared_ptr<Simulator>& sim, const std::shared_ptr<
     if (planner->getPath().size() > 1)
     {
       std::vector<Pose> poses = planner->getPath();
-      sim->testPose(poses);
+      // sim->testPose(poses);
       next_twist = tracker->track(sim->getFriendlyPose(), sim->getFriendlyLinearVelocity(), poses.front(), poses.at(1));
     }
     else
