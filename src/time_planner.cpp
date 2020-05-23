@@ -1,4 +1,5 @@
 #include "time_planner.h"
+#include <iostream>
 
 TimePlanner::TimePlanner(std::shared_ptr<Simulator> sim)
 {
@@ -24,13 +25,21 @@ void TimePlanner::plan(std::vector<Aircraft> aircraft)
 
   for (auto planes_key = 1; planes_key != planes_.size(); planes_key++)
   {
+    double distance = sqrt(pow(planes_.at(FRIENDLY_KEY).pose.position.x - planes_.at(planes_key).pose.position.x, 2) +
+                           pow(planes_.at(FRIENDLY_KEY).pose.position.y - planes_.at(planes_key).pose.position.y, 2));
+    double look_ahead_time = time_gradient_ * distance + time_y_intercept;
+    look_ahead_time = fmin(look_ahead_time, time_max_look_ahead_);
+    look_ahead_time = fmax(look_ahead_time, time_min_look_ahead_);
+
+    std::cout << look_ahead_time << std::endl;
+
     GlobalOrd point_next_time_step = {
-      planes_.at(planes_key).pose.position.x +
-          planes_.at(planes_key).linear_velocity * cos(planes_.at(planes_key).pose.orientation) *
-              (TIME_PREDICTION_CONSTANT + planes_.at(planes_key).timer.elapsed() / 1000.0),
-      planes_.at(planes_key).pose.position.y +
-          planes_.at(planes_key).linear_velocity * sin(planes_.at(planes_key).pose.orientation) *
-              (TIME_PREDICTION_CONSTANT + planes_.at(planes_key).timer.elapsed() / 1000.0)
+      planes_.at(planes_key).pose.position.x + planes_.at(planes_key).linear_velocity *
+                                                   cos(planes_.at(planes_key).pose.orientation) *
+                                                   (look_ahead_time + planes_.at(planes_key).timer.elapsed() / 1000.0),
+      planes_.at(planes_key).pose.position.y + planes_.at(planes_key).linear_velocity *
+                                                   sin(planes_.at(planes_key).pose.orientation) *
+                                                   (look_ahead_time + planes_.at(planes_key).timer.elapsed() / 1000.0)
     };
 
     Pose pose_next_time_step = { point_next_time_step, planes_.at(planes_key).pose.orientation };
