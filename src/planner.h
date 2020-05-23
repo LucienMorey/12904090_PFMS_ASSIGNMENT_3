@@ -22,6 +22,9 @@ protected:
   const double TIME_PREDICTION_CONSTANT = 1;
   const unsigned int FRIENDLY_KEY = 0;
 
+  const double AVERAGE_LINEAR_VELOCITY = 700.0;
+  const double AVERAGE_ANGULAR_VELOCITY = 1.17;
+
 public:
   Planner(/* args */){};
   ~Planner(){};

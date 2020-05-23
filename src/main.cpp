@@ -14,12 +14,12 @@
 
 #include "pure_pursuit.h"
 #include "estimator.h"
-#include "distance_planner.h"
+#include "time_planner.h"
 
 void plannerThread(const std::shared_ptr<Simulator>& sim, const std::shared_ptr<Estimator>& estimator,
-                   const std::shared_ptr<DistancePlanner>& planner);
+                   const std::shared_ptr<Planner>& planner);
 void controlThread(const std::shared_ptr<Simulator>& sim, const std::shared_ptr<path_tracker>& tracker,
-                   const std::shared_ptr<DistancePlanner>& planner);
+                   const std::shared_ptr<Planner>& planner);
 
 std::mutex mx;
 
@@ -31,7 +31,7 @@ int main(void)
   std::shared_ptr<Simulator> sim(new Simulator());
   std::shared_ptr<path_tracker> tracker(new PurePursuit());
   std::shared_ptr<Estimator> estimator(new Estimator());
-  std::shared_ptr<DistancePlanner> planner(new DistancePlanner(sim));
+  std::shared_ptr<Planner> planner(new TimePlanner(sim));
 
   // set sim in estimator to start estimation
   estimator->setSimulator(sim);
@@ -51,7 +51,7 @@ int main(void)
 }
 
 void plannerThread(const std::shared_ptr<Simulator>& sim, const std::shared_ptr<Estimator>& estimator,
-                   const std::shared_ptr<DistancePlanner>& planner)
+                   const std::shared_ptr<Planner>& planner)
 {
   while (true)
   {
@@ -86,7 +86,7 @@ void plannerThread(const std::shared_ptr<Simulator>& sim, const std::shared_ptr<
 }
 
 void controlThread(const std::shared_ptr<Simulator>& sim, const std::shared_ptr<path_tracker>& tracker,
-                   const std::shared_ptr<DistancePlanner>& planner)
+                   const std::shared_ptr<Planner>& planner)
 {
   while (true)
   {
