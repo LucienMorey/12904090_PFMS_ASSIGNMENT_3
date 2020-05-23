@@ -40,7 +40,7 @@ Twist_t PurePursuit::track(const Pose& current_pose, double current_velocity, co
   }
   else if (heading_error < -M_PI)
   {
-    heading_error = 2 * M_PI - heading_error;
+    heading_error = 2 * M_PI + heading_error;
   }
 
   if (fabs(heading_error) < LARGE_ANGULAR_TOLERANCE)
