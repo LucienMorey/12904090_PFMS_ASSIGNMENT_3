@@ -19,7 +19,7 @@ private:
   double time_y_intercept = -time_gradient_ * distance_min_look_ahead_ + time_min_look_ahead_;
 
 public:
-  TimePlanner(std::shared_ptr<Simulator> sim /* args */);
+  TimePlanner(Simulator* sim);
   ~TimePlanner();
   void plan(std::vector<Aircraft> aircraft);
 };

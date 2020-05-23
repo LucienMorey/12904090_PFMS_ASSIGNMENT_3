@@ -7,7 +7,7 @@ class DataUpdater
 {
 private:
   /* data */
-  std::shared_ptr<Simulator> simulator_;
+  Simulator* simulator_;
 
   std::deque<std::vector<RangeBearingStamped>> range_bearings_from_friendly_;
   std::deque<std::vector<RangeVelocityStamped>> range_velocity_from_tower_;
@@ -17,7 +17,7 @@ private:
   std::mutex tower_mx_;
 
 public:
-  DataUpdater(std::shared_ptr<Simulator> sim);
+  DataUpdater(Simulator* sim);
   ~DataUpdater();
 
   void updateDataFromFriendly();

@@ -1,9 +1,9 @@
 #include "time_planner.h"
 #include <iostream>
 
-TimePlanner::TimePlanner(std::shared_ptr<Simulator> sim)
+TimePlanner::TimePlanner(Simulator* sim)
 {
-  sim_ = sim.get();
+  sim_ = sim;
 }
 
 TimePlanner::~TimePlanner()

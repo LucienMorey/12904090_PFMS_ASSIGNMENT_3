@@ -1,6 +1,6 @@
 #include "data_updater.h"
 
-DataUpdater::DataUpdater(std::shared_ptr<Simulator> sim) : simulator_(sim.get())
+DataUpdater::DataUpdater(Simulator* sim) : simulator_(sim)
 {
 }
 

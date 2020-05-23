@@ -12,7 +12,7 @@ Estimator::~Estimator()
   delete updater;
 }
 
-void Estimator::setSimulator(const std::shared_ptr<Simulator>& simulator)
+void Estimator::setSimulator(Simulator* simulator)
 {
   // set simulator for updater use
   updater = new DataUpdater(simulator);

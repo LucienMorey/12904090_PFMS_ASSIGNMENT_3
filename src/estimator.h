@@ -34,7 +34,7 @@ public:
   Estimator();
   ~Estimator();
 
-  void setSimulator(const std::shared_ptr<Simulator>& simulator);
+  void setSimulator(Simulator* simulator);
 
   std::vector<Aircraft> getBogies();
 };
