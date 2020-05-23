@@ -91,7 +91,7 @@ Twist_t PurePursuit::track(const Pose& current_pose, double current_velocity, co
   }
   else
   {
-    double angular_velocity = heading_error * ANGULAR_KP;
+    double angular_velocity = sign(heading_error) * MAX_ANGLE_VELOCITY;
     angular_velocity = fmax(angular_velocity, -MAX_ANGLE_VELOCITY);
     angular_velocity = fmin(angular_velocity, MAX_ANGLE_VELOCITY);
     double linear_velocity = MIN_LINEAR_VELOCITY;

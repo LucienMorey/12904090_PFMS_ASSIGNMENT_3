@@ -6,8 +6,6 @@
 class PurePursuit : public path_tracker
 {
 private:
-  double ANGULAR_KP = 0.3;
-
   double pi2Topi(double angle);
   double sign(double num);
 
