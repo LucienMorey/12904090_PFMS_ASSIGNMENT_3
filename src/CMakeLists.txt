@@ -78,7 +78,7 @@ endif()
 
 
 add_library(tracking pure_pursuit.cpp estimator.cpp data_updater.cpp graph.cpp distance_planner.cpp)
-set_target_properties(tracking PROPERTIES PUBLIC_HEADER "path_tracker.h; pure_pursuit.h; estimator.h; data_updater.h; graph.h; distance_planner.h")
+set_target_properties(tracking PROPERTIES PUBLIC_HEADER "path_tracker.h; pure_pursuit.h; estimator.h; data_updater.h; graph.h; planner.h;distance_planner.h")
 target_link_libraries(tracking ${OpenCV_LIBS} simulator)
 
 # Here we declare a C++ executable with only one cpp forming part of it, you will need to change to cater for more files.
