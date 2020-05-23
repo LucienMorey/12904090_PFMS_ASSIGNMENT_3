@@ -13,7 +13,7 @@ struct Twist_t
 class path_tracker
 {
 protected:
-  const double LARGE_ANGULAR_TOLERANCE = M_PI / 2;
+  const double LARGE_ANGULAR_TOLERANCE = M_PI / 6;
 
   const double MIN_LINEAR_VELOCITY = 50.0;
   const double MAX_LINEAR_VELOCITY = 900.0;
