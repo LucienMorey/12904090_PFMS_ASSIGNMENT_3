@@ -26,7 +26,7 @@ public:
   Planner(/* args */){};
   ~Planner(){};
 
-  virtual std::vector<Pose> getPath() = 0;
+  std::vector<Pose> getPath();
   virtual void plan(std::vector<Aircraft> aircraft) = 0;
 };
 

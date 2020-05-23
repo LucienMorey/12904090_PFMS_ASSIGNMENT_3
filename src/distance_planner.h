@@ -15,7 +15,6 @@ private:
 public:
   DistancePlanner(std::shared_ptr<Simulator> sim);
   ~DistancePlanner();
-  std::vector<Pose> getPath();
   void plan(std::vector<Aircraft> aircraft);
 };
 

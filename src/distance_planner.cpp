@@ -92,9 +92,3 @@ void DistancePlanner::plan(std::vector<Aircraft> Aircraft)
   path_.push_back(planes_.at(FRIENDLY_KEY).pose);
   path_.push_back(planes_.at(index_to_most_efficient_bogie).pose);
 }
-
-std::vector<Pose> DistancePlanner::getPath()
-{
-  std::lock_guard<std::mutex> lock(path_mx_);
-  return path_;
-}
