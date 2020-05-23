@@ -44,10 +44,10 @@ void TimePlanner::plan(std::vector<Aircraft> aircraft)
              2 * M_PI);
 
     double angle_to_bogie = fabs(angle_to_bogie - planes_.at(FRIENDLY_KEY).pose.orientation);
-    // if (angle_to_bogie > M_PI)
-    // {
-    //   angle_to_bogie = 2 * M_PI - angle_to_bogie;
-    // }
+    if (angle_to_bogie > M_PI)
+    {
+      angle_to_bogie = 2 * M_PI - angle_to_bogie;
+    }
 
     double time_to_bogie =
         sqrt(pow(planes_.at(FRIENDLY_KEY).pose.position.x - planes_.at(planes_key).currentGoalPose.position.x, 2) +
