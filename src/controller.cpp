@@ -46,7 +46,7 @@ void Controller::plannerThread()
     time_point_last_scan = std::chrono::steady_clock::now();
     std::vector<Aircraft> bogies = estimator_->getBogies();
 
-    if (bogies.size() == 4)
+    if (bogies.size() > 0)
     {
       std::vector<Aircraft> planes;
       Aircraft friendly;
