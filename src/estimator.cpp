@@ -35,7 +35,7 @@ void Estimator::determineBogies_()
 {
   // sleep until minimum readings reached
   while (updater->getRangeBearingData().size() < updater->FRIENDLY_DATA_SAMPLES_TO_TRACK)
-    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
   // loop continuously once minimum readings met
   while (1)
@@ -141,13 +141,7 @@ std::vector<Aircraft> Estimator::matchBogies(std::vector<GlobalOrdStamped> range
           // create and pushback matched bogie to list of bogies
           Aircraft bogie;
           bogie.pose = bogie_pose;
-          for (auto velocity : updater->getRangeVelocityData())
-          {
-            if (fabs(bogie_velocity - velocity.velocity) < fabs(bogie_velocity - bogie.linear_velocity))
-            {
-              bogie.linear_velocity = velocity.velocity;
-            }
-          }
+          bogie.linear_velocity = updater->getRangeVelocityData().at(last_size).velocity;
 
           // std::cout << bogie.linear_velocity << std::endl;
           matched_bogies.push_back(bogie);
