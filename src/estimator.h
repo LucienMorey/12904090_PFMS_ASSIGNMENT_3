@@ -31,6 +31,9 @@ private:
   const unsigned int OLD_TIME_INDEX = 1;
   const unsigned int OLDEST_TIME_INDEX = 2;
 
+  const double ANGLE_TOLERENCE = M_PI / 18;
+  const double SEGMENT_LENGTH_TOLERENCE = 5.0;
+
 public:
   Estimator();
   ~Estimator();

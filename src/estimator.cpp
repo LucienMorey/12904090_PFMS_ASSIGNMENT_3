@@ -35,7 +35,7 @@ void Estimator::determineBogies_()
 {
   // sleep until minimum readings reached
   while (updater->getRangeBearingData().size() < updater->FRIENDLY_DATA_SAMPLES_TO_TRACK)
-    std::this_thread::sleep_for(std::chrono::milliseconds(30));
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
   // loop continuously once minimum readings met
   while (1)
@@ -119,7 +119,7 @@ std::vector<Aircraft> Estimator::matchBogies(std::vector<GlobalOrdStamped> range
 
         // if the headings match and the line segments are approximately equal length then they can be considered
         // colinear and can be considered from the same bogie
-        if ((heading_error < M_PI / 18) && (fabs(distance_3_to_2 - distance_2_to_1) < 450))
+        if ((heading_error < ANGLE_TOLERENCE) && (fabs(distance_3_to_2 - distance_2_to_1) < SEGMENT_LENGTH_TOLERENCE))
         {
           // calculate heading of bogie and constrain to 0-2pi
           double bogie_heading_1 = fmod(atan2((current_sample.position.y - old_sample.position.y),
