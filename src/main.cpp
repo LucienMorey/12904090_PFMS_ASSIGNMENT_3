@@ -21,9 +21,9 @@ int main(void)
 {
   // Create a shared pointer for classes
   std::shared_ptr<Simulator> sim(new Simulator());
-  Controller controller(sim);
+  Controller controller;
 
-  controller.begin();
+  controller.begin(sim);
 
   return 0;
 }
