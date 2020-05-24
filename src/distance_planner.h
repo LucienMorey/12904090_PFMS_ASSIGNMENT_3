@@ -7,13 +7,8 @@
 
 class DistancePlanner : public Planner
 {
-private:
-  /* data */
-
-  Simulator* sim_;
-
 public:
-  DistancePlanner(std::shared_ptr<Simulator> sim);
+  DistancePlanner();
   ~DistancePlanner();
   void plan(std::vector<Aircraft> aircraft);
 };

@@ -1,8 +1,7 @@
 #include "distance_planner.h"
 
-DistancePlanner::DistancePlanner(std::shared_ptr<Simulator> sim)
+DistancePlanner::DistancePlanner()
 {
-  sim_ = sim.get();
 }
 
 DistancePlanner::~DistancePlanner()
@@ -13,8 +12,9 @@ void DistancePlanner::plan(std::vector<Aircraft> Aircraft)
 {
   weightedGraph_.clear();
   planes_.clear();
+
   int key = 0;
-  std::vector<Pose> poses;
+  // create gempy graph of planes and keyed map of aircraft to match
   for (auto plane : Aircraft)
   {
     addVertex(key);
@@ -24,6 +24,7 @@ void DistancePlanner::plan(std::vector<Aircraft> Aircraft)
 
   for (auto planes_key = 1; planes_key != planes_.size(); planes_key++)
   {
+    // calculate bogie position in the next time step
     GlobalOrd point_next_time_step = {
       planes_.at(planes_key).pose.position.x +
           planes_.at(planes_key).linear_velocity * cos(planes_.at(planes_key).pose.orientation) *
@@ -33,29 +34,22 @@ void DistancePlanner::plan(std::vector<Aircraft> Aircraft)
               (TIME_PREDICTION_CONSTANT + planes_.at(planes_key).timer.elapsed() / 1000.0)
     };
 
+    // bogie pose in next timestep will be at the next position with the same orientation
     Pose pose_next_time_step = { point_next_time_step, planes_.at(planes_key).pose.orientation };
 
+    // set goal pose for next time step
     planes_.at(planes_key).currentGoalPose = pose_next_time_step;
 
+    // calculate the distance between the bogie position and the friendly position
     double distance = sqrt(pow(pose_next_time_step.position.x - planes_.at(FRIENDLY_KEY).pose.position.x, 2) +
                            pow(pose_next_time_step.position.y - planes_.at(FRIENDLY_KEY).pose.position.y, 2));
 
-    double angle_to_friendly = atan2(planes_.at(FRIENDLY_KEY).pose.position.x - pose_next_time_step.position.x,
-                                     planes_.at(FRIENDLY_KEY).pose.position.y - pose_next_time_step.position.y);
-
-    double converted_orientation = atan2(sin(pose_next_time_step.orientation), cos(pose_next_time_step.orientation));
-
-    double angle_error_bogie_to_friendly = fabs(angle_to_friendly - converted_orientation);
-
-    if (angle_error_bogie_to_friendly > M_PI)
-    {
-      angle_error_bogie_to_friendly = 2 * M_PI - angle_error_bogie_to_friendly;
-    }
-
+    // weight graph based on distance to bogie
     double weight = distance;
     addEdge(FRIENDLY_KEY, planes_key, weight);
   }
 
+  // find the index for the lowest weighted graph edge
   unsigned int index_to_most_efficient_bogie = 1;
   for (int i = 1; i != weightedGraph_.at(FRIENDLY_KEY).size(); i++)
   {
@@ -65,13 +59,7 @@ void DistancePlanner::plan(std::vector<Aircraft> Aircraft)
     }
   }
 
-  double distance = sqrt(pow(planes_.at(FRIENDLY_KEY).pose.position.x -
-                                 planes_.at(index_to_most_efficient_bogie).currentGoalPose.position.x,
-                             2) +
-                         pow(planes_.at(FRIENDLY_KEY).pose.position.y -
-                                 planes_.at(index_to_most_efficient_bogie).currentGoalPose.position.y,
-                             2));
-
+  // lock the path mutex and set the path to be the link between the friendly and lowest weighted bogie
   std::lock_guard<std::mutex> lock(path_mx_);
   path_.clear();
   path_.push_back(planes_.at(FRIENDLY_KEY).pose);
