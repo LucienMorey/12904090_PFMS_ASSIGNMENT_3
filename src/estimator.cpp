@@ -141,9 +141,10 @@ std::vector<Aircraft> Estimator::matchBogies(std::vector<GlobalOrdStamped> range
           // create and pushback matched bogie to list of bogies
           Aircraft bogie;
           bogie.pose = bogie_pose;
+
+          // assume readings are in order in sim and match fixed velocity readings
           bogie.linear_velocity = updater->getRangeVelocityData().at(last_size).velocity;
 
-          // std::cout << bogie.linear_velocity << std::endl;
           matched_bogies.push_back(bogie);
           break;
         }
@@ -163,7 +164,6 @@ std::vector<Aircraft> Estimator::matchBogies(std::vector<GlobalOrdStamped> range
 GlobalOrdStamped Estimator::transformBogietoGlobal(Pose friendly_pose, RangeBearingStamped relative_pos)
 {
   // return global co-ords of bogie relative to friendly
-
   return GlobalOrdStamped{
     { friendly_pose.position.x + relative_pos.range * cos(relative_pos.bearing + friendly_pose.orientation),
       friendly_pose.position.y + relative_pos.range * sin(relative_pos.bearing + friendly_pose.orientation) },
