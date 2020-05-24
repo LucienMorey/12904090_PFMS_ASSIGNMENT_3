@@ -2,7 +2,14 @@
 #include <iostream>
 
 TimePlanner::TimePlanner()
+  : distance_max_look_ahead_(DEFAULT_MAX_LOOK_AHEAD_DISTANCE)
+  , distance_min_look_ahead_(DEFAULT_MIN_LOOK_AHEAD_DISTANCE)
+  , time_min_look_ahead_(DEFAULT_MIN_LOOK_AHEAD_TIME)
+  , time_max_look_ahead_(DEFAULT_MAX_LOOK_AHEAD_TIME)
 {
+  time_gradient_ =
+      (time_max_look_ahead_ - time_min_look_ahead_) / (distance_max_look_ahead_ - distance_min_look_ahead_);
+  time_y_intercept = -time_gradient_ * distance_min_look_ahead_ + time_min_look_ahead_;
 }
 
 TimePlanner::~TimePlanner()
