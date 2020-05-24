@@ -84,9 +84,8 @@ void TimePlanner::plan(std::vector<Aircraft> aircraft)
     double time_to_bogie =
         sqrt(pow(planes_.at(FRIENDLY_KEY).pose.position.x - planes_.at(planes_key).currentGoalPose.position.x, 2) +
              pow(planes_.at(FRIENDLY_KEY).pose.position.y - planes_.at(planes_key).currentGoalPose.position.y, 2)) /
-        AVERAGE_LINEAR_VELOCITY;
-
-    //+angle_to_bogie / AVERAGE_ANGULAR_VELOCITY;
+            AVERAGE_LINEAR_VELOCITY +
+        angle_to_bogie / AVERAGE_ANGULAR_VELOCITY;
 
     // weight graph with time to bogie
     double weight = time_to_bogie;
