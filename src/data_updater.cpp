@@ -21,7 +21,7 @@ void DataUpdater::updateDataFromFriendly()
     if (range_bearings_from_friendly_.size() > FRIENDLY_DATA_SAMPLES_TO_TRACK)
     {
       range_bearings_from_friendly_.resize(FRIENDLY_DATA_SAMPLES_TO_TRACK);
-      poses_of_friendly_.resize(TOWER_DATA_SAMPLES_TO_TRACK);
+      poses_of_friendly_.resize(FRIENDLY_DATA_SAMPLES_TO_TRACK);
     }
   }
 }
@@ -30,15 +30,10 @@ void DataUpdater::updateDataFromTower()
 {
   while (1)
   {
-    auto temp_velocity_range = simulator_->rangeVelocityToBogiesFromBase();
+    std::vector<RangeVelocityStamped> temp_velocity_range = simulator_->rangeVelocityToBogiesFromBase();
 
     std::lock_guard<std::mutex> lock(tower_mx_);
-    range_velocity_from_tower_.push_front(temp_velocity_range);
-
-    if (range_velocity_from_tower_.size() > TOWER_DATA_SAMPLES_TO_TRACK)
-    {
-      range_velocity_from_tower_.resize(TOWER_DATA_SAMPLES_TO_TRACK);
-    }
+    range_velocity_from_tower_ = temp_velocity_range;
   }
 }
 
@@ -48,7 +43,7 @@ std::deque<std::vector<RangeBearingStamped>> DataUpdater::getRangeBearingData()
   return range_bearings_from_friendly_;
 }
 
-std::deque<std::vector<RangeVelocityStamped>> DataUpdater::getRangeVelocityData()
+std::vector<RangeVelocityStamped> DataUpdater::getRangeVelocityData()
 {
   std::lock_guard<std::mutex> lock(tower_mx_);
   return range_velocity_from_tower_;

@@ -38,7 +38,11 @@ void Controller::plannerThread()
   {
     // plot current bogie poses from estimator
     std::unique_lock<std::mutex> lock(mx);
-    // poses.push_back(sim->getFriendlyPose());
+    cond.wait(lock, [this]() {
+      return ((std::chrono::duration<double, std::ratio<1, 1>>(std::chrono::steady_clock::now() - time_point_last_scan)
+                   .count() > trajectory_time));
+    });
+    time_point_last_scan = std::chrono::steady_clock::now();
     std::vector<Aircraft> bogies = estimator_->getBogies();
 
     if (bogies.size() == 4)
@@ -62,7 +66,7 @@ void Controller::plannerThread()
 
     lock.unlock();
     // slow the thread to see bogie readings
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
   }
 }
 
@@ -72,10 +76,11 @@ void Controller::controlThread()
   {
     // Feed the watchdog control timer
     Twist_t next_twist;
-    // std::unique_lock<std::mutex> lock(mx);
+    std::unique_lock<std::mutex> lock(mx);
     if (planner_->getPath().size() > 1)
     {
-      std::vector<Pose> poses = planner_->getPath();
+      poses = planner_->getPath();
+      trajectory_time = planner_->getPathTime();
       // sim->testPose(poses);
       next_twist =
           tracker_->track(sim_->getFriendlyPose(), sim_->getFriendlyLinearVelocity(), poses.front(), poses.at(1));
@@ -83,10 +88,12 @@ void Controller::controlThread()
     else
     {
       next_twist = { 50, 0, 0 };
+      trajectory_time = 0.0;
     }
-    // lock.unlock();
+    lock.unlock();
+
     sim_->controlFriendly(next_twist.vX, next_twist.vZ);
-    // sim->testPose(std::vector<Pose>(1, { { -2000.0, 100.0 }, 2.0 }));
+    cond.notify_one();
 
     std::this_thread::sleep_for(std::chrono::milliseconds(50));
   }

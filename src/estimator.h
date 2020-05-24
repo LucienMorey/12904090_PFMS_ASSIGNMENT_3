@@ -23,6 +23,7 @@ private:
 
   std::thread friendly_updater;
   std::thread bogie_estimator;
+  std::thread base_updater;
 
   AircraftContainer bogies_;
 

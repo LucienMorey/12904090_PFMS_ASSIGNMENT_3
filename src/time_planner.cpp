@@ -31,8 +31,7 @@ void TimePlanner::plan(std::vector<Aircraft> aircraft)
     look_ahead_time = fmin(look_ahead_time, time_max_look_ahead_);
     look_ahead_time = fmax(look_ahead_time, time_min_look_ahead_);
 
-    std::cout << look_ahead_time << std::endl;
-
+    look_ahead_times[planes_key] = look_ahead_time;
     GlobalOrd point_next_time_step = {
       planes_.at(planes_key).pose.position.x + planes_.at(planes_key).linear_velocity *
                                                    cos(planes_.at(planes_key).pose.orientation) *
@@ -61,8 +60,9 @@ void TimePlanner::plan(std::vector<Aircraft> aircraft)
     double time_to_bogie =
         sqrt(pow(planes_.at(FRIENDLY_KEY).pose.position.x - planes_.at(planes_key).currentGoalPose.position.x, 2) +
              pow(planes_.at(FRIENDLY_KEY).pose.position.y - planes_.at(planes_key).currentGoalPose.position.y, 2)) /
-            AVERAGE_LINEAR_VELOCITY +
-        angle_to_bogie / AVERAGE_ANGULAR_VELOCITY;
+        AVERAGE_LINEAR_VELOCITY;
+
+    //+angle_to_bogie / AVERAGE_ANGULAR_VELOCITY;
 
     double weight = time_to_bogie;
     addEdge(FRIENDLY_KEY, planes_key, weight);
@@ -81,5 +81,12 @@ void TimePlanner::plan(std::vector<Aircraft> aircraft)
   path_.clear();
   path_.push_back(planes_.at(FRIENDLY_KEY).pose);
   path_.push_back(planes_.at(index_to_most_efficient_bogie).currentGoalPose);
+  path_time_ = look_ahead_times.at(index_to_most_efficient_bogie);
   sim_->testPose(path_);
+}
+
+double TimePlanner::getPathTime()
+{
+  std::lock_guard<std::mutex> lock(path_mx_);
+  return path_time_;
 }

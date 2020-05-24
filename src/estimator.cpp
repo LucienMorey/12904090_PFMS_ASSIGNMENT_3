@@ -8,6 +8,7 @@ Estimator::~Estimator()
 {
   friendly_updater.join();
   bogie_estimator.join();
+  base_updater.join();
 
   delete updater;
 }
@@ -19,6 +20,7 @@ void Estimator::setSimulator(Simulator* simulator)
 
   // now that simulator has been set threads can be created and estimation can begin
   friendly_updater = std::thread(&DataUpdater::updateDataFromFriendly, updater);
+  base_updater = std::thread(&DataUpdater::updateDataFromTower, updater);
   bogie_estimator = std::thread(&Estimator::determineBogies_, this);
 }
 
@@ -139,7 +141,15 @@ std::vector<Aircraft> Estimator::matchBogies(std::vector<GlobalOrdStamped> range
           // create and pushback matched bogie to list of bogies
           Aircraft bogie;
           bogie.pose = bogie_pose;
-          bogie.linear_velocity = bogie_velocity;
+          for (auto velocity : updater->getRangeVelocityData())
+          {
+            if (fabs(bogie_velocity - velocity.velocity) < fabs(bogie_velocity - bogie.linear_velocity))
+            {
+              bogie.linear_velocity = velocity.velocity;
+            }
+          }
+
+          // std::cout << bogie.linear_velocity << std::endl;
           matched_bogies.push_back(bogie);
           break;
         }
