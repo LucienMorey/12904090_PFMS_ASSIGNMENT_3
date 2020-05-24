@@ -34,8 +34,8 @@ std::vector<Aircraft> Estimator::getBogies()
 void Estimator::determineBogies_()
 {
   // sleep until minimum readings reached
-  while (updater->getRangeBearingData().size() < updater->FRIENDLY_DATA_SAMPLES_TO_TRACK)
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+  while (updater->getRangeVelocityData().size() < 1)
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
   // loop continuously once minimum readings met
   while (1)
