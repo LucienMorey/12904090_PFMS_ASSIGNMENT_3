@@ -39,10 +39,10 @@ void Controller::plannerThread()
     // plot current bogie poses from estimator
     std::unique_lock<std::mutex> lock(mx);
 
-    cond.wait(lock, [this]() {
-      return ((std::chrono::duration<double>(std::chrono::steady_clock::now() - time_point_last_scan).count() >
-               trajectory_time));
-    });
+    // cond.wait(lock, [this]() {
+    //   return ((std::chrono::duration<double>(std::chrono::steady_clock::now() - time_point_last_scan).count() >
+    //            trajectory_time));
+    // });
     time_point_last_scan = std::chrono::steady_clock::now();
     std::vector<Aircraft> bogies = estimator_->getBogies();
 
@@ -82,7 +82,7 @@ void Controller::controlThread()
     {
       poses = planner_->getPath();
       trajectory_time = planner_->getPathTime();
-      // sim->testPose(poses);
+      sim_->testPose(poses);
       next_twist =
           tracker_->track(sim_->getFriendlyPose(), sim_->getFriendlyLinearVelocity(), poses.front(), poses.at(1));
     }
