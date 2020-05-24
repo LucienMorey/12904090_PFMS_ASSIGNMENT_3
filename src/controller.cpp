@@ -81,7 +81,6 @@ void Controller::controlThread()
     if (planner_->getPath().size() > 1)
     {
       poses = planner_->getPath();
-      trajectory_time = planner_->getPathTime();
       sim_->testPose(poses);
       next_twist =
           tracker_->track(sim_->getFriendlyPose(), sim_->getFriendlyLinearVelocity(), poses.front(), poses.at(1));
@@ -89,7 +88,6 @@ void Controller::controlThread()
     else
     {
       next_twist = { 50, 0, 0 };
-      trajectory_time = 0.0;
     }
     lock.unlock();
 
