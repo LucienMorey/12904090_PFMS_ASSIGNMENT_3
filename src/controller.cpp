@@ -22,7 +22,7 @@ void Controller::begin()
 {
   estimator_ = new Estimator();
   tracker_ = new PurePursuit();
-  planner_ = new TimePlanner(sim_);
+  planner_ = new TimePlanner();
 
   estimator_->setSimulator(sim_);
 
@@ -38,9 +38,10 @@ void Controller::plannerThread()
   {
     // plot current bogie poses from estimator
     std::unique_lock<std::mutex> lock(mx);
+
     cond.wait(lock, [this]() {
-      return ((std::chrono::duration<double, std::ratio<1, 1>>(std::chrono::steady_clock::now() - time_point_last_scan)
-                   .count() > trajectory_time));
+      return ((std::chrono::duration<double>(std::chrono::steady_clock::now() - time_point_last_scan).count() >
+               trajectory_time));
     });
     time_point_last_scan = std::chrono::steady_clock::now();
     std::vector<Aircraft> bogies = estimator_->getBogies();
