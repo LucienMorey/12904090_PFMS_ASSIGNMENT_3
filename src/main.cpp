@@ -23,6 +23,7 @@ int main(void)
   std::shared_ptr<Simulator> sim(new Simulator());
   Controller controller;
 
+  // begin aircraft control
   controller.begin(sim);
 
   return 0;
