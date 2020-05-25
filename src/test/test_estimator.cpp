@@ -41,7 +41,7 @@ TEST(PurePursuitTest, minimumDistance)
   GlobalOrd expected = { 0.0, 5.0 };
 
   GlobalOrd current_pose = { 5, 0 };
-  GlobalOrd out = pursuit.point_line_perpendicular_d(segment_begin, segment_end, current_pose);
+  GlobalOrd out = pursuit.closestPointAlongSegmentFromPoint(segment_begin, segment_end, current_pose);
 
   ASSERT_NEAR(expected.x, out.x, 0.1);
   ASSERT_NEAR(expected.y, out.y, 0.1);

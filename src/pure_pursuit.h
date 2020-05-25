@@ -13,7 +13,7 @@ private:
 
   std::vector<GlobalOrd> line_circle_intercept(GlobalOrd segment_begin, GlobalOrd segment_end, GlobalOrd point_checking,
                                                double circle_radius);
-  GlobalOrd point_line_perpendicular_d(GlobalOrd segment_begin, GlobalOrd segment_end, GlobalOrd point_checking);
+  GlobalOrd closestPointAlongSegmentFromPoint(GlobalOrd segment_begin, GlobalOrd segment_end, GlobalOrd point_checking);
 
 public:
   PurePursuit(){};
