@@ -9,7 +9,6 @@
  */
 #include <thread>
 #include <vector>
-#include <iostream>
 #include "simulator.h"
 
 #include "pure_pursuit.h"
