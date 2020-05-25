@@ -63,7 +63,7 @@ Twist_t PurePursuit::track(const Pose& current_pose, double current_velocity, co
     // the robot
     // there can be up to two interceptions. in this case the furthest interception will be considered
     point_to_track =
-        line_circle_intercept(initial_pose.position, target_pose.position, current_pose.position, look_ahead);
+        lineCircleIntercept(initial_pose.position, target_pose.position, current_pose.position, look_ahead);
 
     // if there was no interception then the robot should get back to the path as quickly as possible and will track the
     // closest interception
@@ -128,8 +128,8 @@ Twist_t PurePursuit::track(const Pose& current_pose, double current_velocity, co
  * @param circle_radius - double, radius of circle
  * @return std::vector<GlobalOrd> - vector containing point of interception
  */
-std::vector<GlobalOrd> PurePursuit::line_circle_intercept(GlobalOrd segment_begin, GlobalOrd segment_end,
-                                                          GlobalOrd circle_origin, double circle_radius)
+std::vector<GlobalOrd> PurePursuit::lineCircleIntercept(GlobalOrd segment_begin, GlobalOrd segment_end,
+                                                        GlobalOrd circle_origin, double circle_radius)
 {
   // solve quadratic to determine the intersection points of line parametrically
 

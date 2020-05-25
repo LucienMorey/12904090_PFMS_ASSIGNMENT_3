@@ -11,8 +11,8 @@ private:
   const double MAX_CURVATURE = MAX_ANGLE_VELOCITY / MIN_LINEAR_VELOCITY;
   double gamma = MAX_CURVATURE;
 
-  std::vector<GlobalOrd> line_circle_intercept(GlobalOrd segment_begin, GlobalOrd segment_end, GlobalOrd point_checking,
-                                               double circle_radius);
+  std::vector<GlobalOrd> lineCircleIntercept(GlobalOrd segment_begin, GlobalOrd segment_end, GlobalOrd point_checking,
+                                             double circle_radius);
   GlobalOrd closestPointAlongSegmentFromPoint(GlobalOrd segment_begin, GlobalOrd segment_end, GlobalOrd point_checking);
 
 public:

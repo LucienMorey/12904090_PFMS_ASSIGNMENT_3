@@ -26,7 +26,7 @@ TEST(PurePursuitTest, circleIntercept)
   GlobalOrd current_pose = { 5, 0 };
   double radius = 9;
 
-  std::vector<GlobalOrd> result = pursuit.line_circle_intercept(segment_begin, segment_end, current_pose, radius);
+  std::vector<GlobalOrd> result = pursuit.lineCircleIntercept(segment_begin, segment_end, current_pose, radius);
   ASSERT_NEAR(expected.x, result.front().x, 0.1);
   ASSERT_NEAR(expected.y, result.front().y, 0.1);
 }
