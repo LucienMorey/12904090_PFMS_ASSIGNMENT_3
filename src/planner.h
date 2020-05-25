@@ -2,31 +2,19 @@
 #define PLANNER_H
 
 #include "types.h"
-#include "graph.h"
 
-class Planner : public Graph
+class Planner
 {
-  struct keyedAircraft
-  {
-    int key;
-    Aircraft aircraft;
-  };
-
 protected:
-  /* data */
-  std::map<int, Aircraft> planes_;
-
   std::mutex path_mx_;
   std::vector<Pose> path_;
 
-  const double TIME_PREDICTION_CONSTANT = 1;
   const unsigned int FRIENDLY_KEY = 0;
 
   const double AVERAGE_LINEAR_VELOCITY = 900.0;
-  const double AVERAGE_ANGULAR_VELOCITY = 1.17;
 
 public:
-  Planner(/* args */){};
+  Planner(){};
   ~Planner(){};
 
   std::vector<Pose> getPath();
