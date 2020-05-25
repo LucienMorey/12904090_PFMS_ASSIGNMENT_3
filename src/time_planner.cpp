@@ -45,11 +45,21 @@ void TimePlanner::plan(std::vector<Aircraft> aircraft)
     // the bogie goal pose is the pose in the next time step
     planes.at(planes_key).currentGoalPose = pose_next_time_step;
 
-    // estimate time to bogie
-    double time_to_bogie =
-        sqrt(pow(planes.at(FRIENDLY_KEY).pose.position.x - planes.at(planes_key).currentGoalPose.position.x, 2) +
-             pow(planes.at(FRIENDLY_KEY).pose.position.y - planes.at(planes_key).currentGoalPose.position.y, 2)) /
-        AVERAGE_LINEAR_VELOCITY;
+    double time_to_bogie;
+    // check if bogie pose lies in considered section of map
+    if (pointInsideSpace(planes.at(planes_key).currentGoalPose.position))
+    {
+      // estimate time to bogie
+      time_to_bogie =
+          sqrt(pow(planes.at(FRIENDLY_KEY).pose.position.x - planes.at(planes_key).currentGoalPose.position.x, 2) +
+               pow(planes.at(FRIENDLY_KEY).pose.position.y - planes.at(planes_key).currentGoalPose.position.y, 2)) /
+          AVERAGE_LINEAR_VELOCITY;
+    }
+    else
+    {
+      // set time to be infiity so the target is never pursued
+      time_to_bogie = std::numeric_limits<double>::infinity();
+    }
 
     // weight graph with time to bogie
     double weight = time_to_bogie;
