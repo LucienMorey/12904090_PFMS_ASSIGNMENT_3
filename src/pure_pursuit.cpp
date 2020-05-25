@@ -1,5 +1,4 @@
 #include "pure_pursuit.h"
-#include <iostream>
 #include <algorithm>
 
 double PurePursuit::sign(double num)
@@ -11,18 +10,6 @@ double PurePursuit::sign(double num)
   else
   {
     return -1;
-  }
-}
-
-double PurePursuit::pi2Topi(double angle)
-{
-  if (angle > M_PI)
-  {
-    return angle - (2 * M_PI);
-  }
-  else
-  {
-    return angle;
   }
 }
 
@@ -94,12 +81,6 @@ Twist_t PurePursuit::track(const Pose& current_pose, double current_velocity, co
     // cap the linear velocity at the boundaries of the friendly
     linear_velocity = fmin(linear_velocity, MAX_LINEAR_VELOCITY);
     linear_velocity = fmax(linear_velocity, MIN_LINEAR_VELOCITY);
-
-    if ((linear_velocity == NAN) || (angular_velocity == NAN) || (linear_velocity == -NAN) ||
-        (angular_velocity == -NAN))
-    {
-      std::cout << "freakout" << std::endl;
-    }
 
     return Twist_t{ linear_velocity, 0.0, angular_velocity };
   }

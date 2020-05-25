@@ -6,7 +6,6 @@
 class PurePursuit : public path_tracker
 {
 private:
-  double pi2Topi(double angle);
   double sign(double num);
 
   const double MAX_CURVATURE = MAX_ANGLE_VELOCITY / MIN_LINEAR_VELOCITY;
