@@ -29,11 +29,14 @@ double PurePursuit::pi2Topi(double angle)
 Twist_t PurePursuit::track(const Pose& current_pose, double current_velocity, const Pose& initial_pose,
                            const Pose& target_pose)
 {
+  // calculate the delta x and y between the goal pose and the current pose
   double delta_dx_end = target_pose.position.x - current_pose.position.x;
   double delta_dy_end = target_pose.position.y - current_pose.position.y;
 
+  // calculate the overall heading error
   double alpha = atan2(delta_dy_end, delta_dx_end);
   double heading_error = alpha - atan2(sin(current_pose.orientation), cos(current_pose.orientation));
+  // absolute heading error should never be greater than pi. if it is then wrap the angle
   if (heading_error > M_PI)
   {
     heading_error = heading_error - 2 * M_PI;
@@ -43,6 +46,7 @@ Twist_t PurePursuit::track(const Pose& current_pose, double current_velocity, co
     heading_error = 2 * M_PI + heading_error;
   }
 
+  // if the heading error is too large then turn until purepursuit is viable
   if (fabs(heading_error) < LARGE_ANGULAR_TOLERANCE)
   {
     // Determine the look_ahead
@@ -50,9 +54,14 @@ Twist_t PurePursuit::track(const Pose& current_pose, double current_velocity, co
 
     std::vector<GlobalOrd> point_to_track;
 
+    // the point to track will be the interception between the linear path and a circle with radius = look ahead around
+    // the robot
+    // there can be up to two interceptions. in this case the furthest interception will be considered
     point_to_track =
         line_circle_intercept(initial_pose.position, target_pose.position, current_pose.position, look_ahead);
 
+    // if there was no interception then the robot should get back to the path as quickly as possible and will track the
+    // closest interception
     if (point_to_track.size() == 0)
     {
       // find point at line at perpendicular distance
@@ -61,23 +70,28 @@ Twist_t PurePursuit::track(const Pose& current_pose, double current_velocity, co
       point_to_track.push_back(closest_interception);
     }
 
-    double delta_x = point_to_track.front().x - current_pose.position.x;
-    double delta_y = point_to_track.front().y - current_pose.position.x;
-
+    // calculate the perpendicular distance between the current position and the path
     double a = -tan(current_pose.orientation);
     double b = 1;
     double c = tan(current_pose.orientation) * current_pose.position.x - current_pose.position.y;
     double x = fabs(a * point_to_track.front().x + b * point_to_track.front().y + c) / sqrt(pow(a, 2) + pow(b, 2));
 
+    // note the side of the path that the friendly occupies
     int side = sign(sin(current_pose.orientation) * (point_to_track.front().x - current_pose.position.x) -
                     cos(current_pose.orientation) * (point_to_track.front().y - current_pose.position.y));
 
+    // calculate curvature
     gamma = 2.0 * x / pow(look_ahead, 2);
 
+    // calculate angular velocity
     double angular_velocity = -sign(side) * sqrt(MAX_G * G * fabs(gamma));
+    // ensure it remains within maximum bounds
     angular_velocity = fmax(angular_velocity, -MAX_ANGLE_VELOCITY);
     angular_velocity = fmin(angular_velocity, MAX_ANGLE_VELOCITY);
+
+    // calculate linear velocity so that the bogie always flies at 6Gs
     double linear_velocity = fabs(angular_velocity / gamma);
+    // cap the linear velocity at the boundaries of the friendly
     linear_velocity = fmin(linear_velocity, MAX_LINEAR_VELOCITY);
     linear_velocity = fmax(linear_velocity, MIN_LINEAR_VELOCITY);
 
@@ -91,9 +105,14 @@ Twist_t PurePursuit::track(const Pose& current_pose, double current_velocity, co
   }
   else
   {
+    // rotate at maximum angle velocity until within angle allowance
     double angular_velocity = sign(heading_error) * MAX_ANGLE_VELOCITY;
+
+    // constrain angle velocity
     angular_velocity = fmax(angular_velocity, -MAX_ANGLE_VELOCITY);
     angular_velocity = fmin(angular_velocity, MAX_ANGLE_VELOCITY);
+
+    // set linear velocity to min allowable to "rotate on the spot"
     double linear_velocity = MIN_LINEAR_VELOCITY;
 
     return Twist_t{ linear_velocity, 0.0, angular_velocity };
@@ -159,6 +178,7 @@ std::vector<GlobalOrd> PurePursuit::line_circle_intercept(GlobalOrd segment_begi
     // otherwise, no intersection in range of segment
   }
 
+  // if there are two intersection points then keep the point the furthest along the segment
   if (intersection_points.size() == 2)
   {
     if (t1 > t2)
@@ -179,6 +199,7 @@ std::vector<GlobalOrd> PurePursuit::line_circle_intercept(GlobalOrd segment_begi
 GlobalOrd PurePursuit::point_line_perpendicular_d(GlobalOrd segment_begin, GlobalOrd segment_end,
                                                   GlobalOrd point_checking)
 {
+  // implementation of code found here: http://www.fundza.com/vectors/point2line/index.html
   GlobalOrd line_vector = { segment_end.x - segment_begin.x, segment_end.y - segment_begin.y };
 
   GlobalOrd point_vector = { point_checking.x - segment_begin.x, point_checking.y - segment_begin.y };
