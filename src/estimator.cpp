@@ -1,5 +1,4 @@
 #include "estimator.h"
-#include <iostream>
 Estimator::Estimator()
 {
 }
