@@ -18,8 +18,8 @@ void Estimator::setSimulator(Simulator* simulator)
   updater = new DataUpdater(simulator);
 
   // now that simulator has been set threads can be created and estimation can begin
-  friendly_updater = std::thread(&DataUpdater::updateDataFromFriendly, updater);
-  base_updater = std::thread(&DataUpdater::updateDataFromTower, updater);
+  friendly_updater = std::thread(&DataUpdater::updateDataFromFriendly, updater, &(this->friendly_cv));
+  base_updater = std::thread(&DataUpdater::updateDataFromTower, updater, &(this->base_cv));
   bogie_estimator = std::thread(&Estimator::determineBogies_, this);
 }
 
@@ -32,9 +32,10 @@ std::vector<Aircraft> Estimator::getBogies()
 
 void Estimator::determineBogies_()
 {
-  // sleep until minimum readings reached
-  while (updater->getRangeVelocityData().size() < 1)
-    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+  // condvar wait until there is at least one base reading
+  std::unique_lock<std::mutex> lock(base_mx_);
+  base_cv.wait(lock, [this]() { return updater->getRangeVelocityData().size() > 0; });
+  lock.unlock();
 
   // loop continuously once minimum readings met
   while (1)

@@ -8,7 +8,7 @@ DataUpdater::~DataUpdater()
 {
 }
 
-void DataUpdater::updateDataFromFriendly()
+void DataUpdater::updateDataFromFriendly(std::condition_variable* cv)
 {
   while (1)
   {
@@ -17,7 +17,7 @@ void DataUpdater::updateDataFromFriendly()
     auto temp_friendly_pose = simulator_->getFriendlyPose();
 
     // lock sample variables and record most recent samples
-    std::lock_guard<std::mutex> lock(friendly_mx_);
+    std::unique_lock<std::mutex> lock(friendly_mx_);
     range_bearings_from_friendly_.push_front(temp_range_bearing);
     poses_of_friendly_.push_front(temp_friendly_pose);
 
@@ -27,10 +27,12 @@ void DataUpdater::updateDataFromFriendly()
       range_bearings_from_friendly_.resize(FRIENDLY_DATA_SAMPLES_TO_TRACK);
       poses_of_friendly_.resize(FRIENDLY_DATA_SAMPLES_TO_TRACK);
     }
+    lock.unlock();
+    cv->notify_one();
   }
 }
 
-void DataUpdater::updateDataFromTower()
+void DataUpdater::updateDataFromTower(std::condition_variable* cv)
 {
   while (1)
   {
@@ -38,8 +40,10 @@ void DataUpdater::updateDataFromTower()
     std::vector<RangeVelocityStamped> temp_velocity_range = simulator_->rangeVelocityToBogiesFromBase();
 
     // lock sample and record most recent sample
-    std::lock_guard<std::mutex> lock(tower_mx_);
+    std::unique_lock<std::mutex> lock(tower_mx_);
     range_velocity_from_tower_ = temp_velocity_range;
+    lock.unlock();
+    cv->notify_one();
   }
 }
 

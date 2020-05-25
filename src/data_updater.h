@@ -2,6 +2,7 @@
 #define DATAUPDATER_H
 
 #include "simulator.h"
+#include <condition_variable>
 
 class DataUpdater
 {
@@ -20,8 +21,8 @@ public:
   DataUpdater(Simulator* sim);
   ~DataUpdater();
 
-  void updateDataFromFriendly();
-  void updateDataFromTower();
+  void updateDataFromFriendly(std::condition_variable* cv);
+  void updateDataFromTower(std::condition_variable* cv);
 
   std::deque<std::vector<RangeBearingStamped>> getRangeBearingData();
   std::vector<RangeVelocityStamped> getRangeVelocityData();
