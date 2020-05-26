@@ -1,9 +1,17 @@
 #include "controller.h"
 
+/**
+ * @brief Construct a new Controller:: Controller object
+ *
+ */
 Controller::Controller()
 {
 }
 
+/**
+ * @brief Destroy the Controller:: Controller object. join all started threads and deloete hanging pointers
+ *
+ */
 Controller::~Controller()
 {
   // Join threads
@@ -17,7 +25,12 @@ Controller::~Controller()
   delete tracker_;
   delete planner_;
 }
-
+/**
+ * @brief begin control of Friendly Aircraft in simulation. Function creates all componets and starts threads for proper
+ * simulator estimation and control
+ *
+ * @param sim pointeer to simulator that has been created requiring control
+ */
 void Controller::begin(std::shared_ptr<Simulator> sim)
 {
   sim_ = sim.get();
@@ -33,6 +46,10 @@ void Controller::begin(std::shared_ptr<Simulator> sim)
   threads.push_back(std::thread(&Controller::plannerThread, this));
 }
 
+/**
+ * @brief Thread safe function designed to triangulate and plan path to bogies in real time
+ *
+ */
 void Controller::plannerThread()
 {
   while (true)
@@ -67,6 +84,12 @@ void Controller::plannerThread()
   }
 }
 
+/**
+ * @brief Thread safe function that will get the lastest path from the planner thread. if the path is valid, it will be
+ * tracked with pure pursuit otherswise the friendly will receive a command of min linear velocity to ensure the
+ * watchdog is fed
+ *
+ */
 void Controller::controlThread()
 {
   while (true)
