@@ -12,6 +12,8 @@
 This program is designed to implement the tasks as outlined in the Programming for Mechatronic Systems Assignment 3. \n
 
 @section abstract Abstract
+This is the source code for the PFMS Assignment 3 in Autmn 2020. to run this code a simulator pointer must be created and parsed to a controller object begin method that is provided as a part of this library. At this point the code will take over and will execute independently of user input
+
 @subsection planner Planner
 Planner is an abstract trajectory planning class. It is designed to be the base for multiple possible planners depending on the desired method for weighting. Currently only the TimePlanner has been implemented
 @subsubsection timeplanner TimePlanner
