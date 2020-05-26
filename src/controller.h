@@ -10,7 +10,7 @@ class Controller
 {
 private:
   Simulator* sim_;
-  path_tracker* tracker_;
+  PathTracker* tracker_;
   Estimator* estimator_;
   Planner* planner_;
 

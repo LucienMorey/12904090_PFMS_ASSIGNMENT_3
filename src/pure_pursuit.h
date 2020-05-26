@@ -3,7 +3,7 @@
 
 #include "path_tracker.h"
 
-class PurePursuit : public path_tracker
+class PurePursuit : public PathTracker
 {
 private:
   double sign(double num);

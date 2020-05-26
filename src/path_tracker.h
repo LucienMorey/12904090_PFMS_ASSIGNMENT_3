@@ -10,7 +10,7 @@ struct Twist_t
   double vZ;
 };
 
-class path_tracker
+class PathTracker
 {
 protected:
   const double LARGE_ANGULAR_TOLERANCE = M_PI / 80;
@@ -22,7 +22,7 @@ protected:
   const double MAX_ANGLE_VELOCITY = G * MAX_G / MIN_LINEAR_VELOCITY;
 
 public:
-  path_tracker(){};
+  PathTracker(){};
 
   virtual Twist_t track(const Pose& current_pose, double current_velocity, const Pose& initial_pose,
                         const Pose& target_pose) = 0;
