@@ -12,7 +12,13 @@ protected:
   const unsigned int FRIENDLY_KEY = 0;
 
   const double AVERAGE_LINEAR_VELOCITY = 900.0;
-
+  /**
+   * @brief check if point lies within the airspace range. the test is a point in rectangle test
+   *
+   * @param point_to_test GlobalOrd bogie position to be tested
+   * @return true - if the point intercepts the airspace
+   * @return false -if the point does not intercept the airspace
+   */
   bool pointInsideSpace(GlobalOrd point_to_test);
 
   GlobalOrd airspace_centre_;
@@ -45,11 +51,9 @@ public:
   std::vector<Pose> getPath();
 
   /**
-   * @brief check if point lies within the airspace range. the test is a point in rectangle test
+   * @brief virtual plan method to be implemented in derived classes
    *
-   * @param point_to_test GlobalOrd bogie position to be tested
-   * @return true - if the point intercepts the airspace
-   * @return false -if the point does not intercept the airspace
+   * @param aircraft vector of aircraft to consider when creating path
    */
   virtual void plan(std::vector<Aircraft> aircraft) = 0;
 };
