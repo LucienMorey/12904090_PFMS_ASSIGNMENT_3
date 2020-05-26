@@ -33,7 +33,7 @@ Twist_t PurePursuit::track(const Pose& current_pose, double current_velocity, co
   }
 
   // if the heading error is too large then turn until purepursuit is viable
-  if (fabs(heading_error) < LARGE_ANGULAR_TOLERANCE)
+  if (fabs(heading_error) < ANGULAR_TOLERANCE)
   {
     // Determine the look_ahead
     double look_ahead = current_velocity;
