@@ -1,31 +1,13 @@
 #include "data_updater.h"
 
-/**
- * @brief Construct a new Data Updater:: Data Updater object. A simulator object will need to be created and spawned
- * before this object can be used so that data can be obtained
- *
- * @param sim Simulator to pull data readings from
- */
 DataUpdater::DataUpdater(Simulator* sim) : simulator_(sim)
 {
 }
 
-/**
- * @brief Destroy the Data Updater:: Data Updater object
- *
- */
 DataUpdater::~DataUpdater()
 {
 }
 
-/**
- * @brief A thread function that will obtain range bearing data from the aircraft to bogies and will update the friendly
- * pose at the corresponding timestamp anage how long samples are kept. The function It takes a condition variable
- * parameter that will be notified after a sample is successfully stored.
- *
- * @param cv - a condition variable that will have the notify_one function called after a data sample is obtained
- * sucessfully
- */
 void DataUpdater::updateDataFromFriendly(std::condition_variable* cv)
 {
   while (1)
@@ -50,14 +32,6 @@ void DataUpdater::updateDataFromFriendly(std::condition_variable* cv)
   }
 }
 
-/**
- * @brief A thread function that will continuously obtain the latest Range velocity reading from the base station and
- * store it within the class. The function takes a condition variable that will recieve the notify one function after
- * the storing process has been completed sucessfuly
- *
- * @param cv - a condition variable that will have the notify_one function called after a data sample is obtained
- * sucessfully
- */
 void DataUpdater::updateDataFromTower(std::condition_variable* cv)
 {
   while (1)
@@ -73,11 +47,6 @@ void DataUpdater::updateDataFromTower(std::condition_variable* cv)
   }
 }
 
-/**
- * @brief thread safe getter of most recent range bearing data samples from the friendly aircraft
- *
- * @return std::deque<std::vector<RangeBearingStamped>> - deque containing the most recent range bearing samples.
- */
 std::deque<std::vector<RangeBearingStamped>> DataUpdater::getRangeBearingData()
 {
   // lock current sample so it cant be overwritten
@@ -85,12 +54,6 @@ std::deque<std::vector<RangeBearingStamped>> DataUpdater::getRangeBearingData()
   return range_bearings_from_friendly_;
 }
 
-/**
- * @brief Thread safe getter for the most recent range velocity sample from the base station
- *
- * @return std::vector<RangeVelocityStamped> - vector containing all rangeVelocity readings from the most recent range
- * velocity sample
- */
 std::vector<RangeVelocityStamped> DataUpdater::getRangeVelocityData()
 {
   // lock current sample so it cant be overwritten
@@ -98,12 +61,6 @@ std::vector<RangeVelocityStamped> DataUpdater::getRangeVelocityData()
   return range_velocity_from_tower_;
 }
 
-/**
- * @brief threadsafe getter of the most most recent friendly poses. Timestamps will match the timestamps from the
- * getRangeBearing data function
- *
- * @return std::deque<Pose> - deque of Most recent Poses
- */
 std::deque<Pose> DataUpdater::getFriendlyPoseData()
 {
   // lock current sample so it cant be overwritten
