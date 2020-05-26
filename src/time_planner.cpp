@@ -1,29 +1,13 @@
 #include "time_planner.h"
 
-/**
- * @brief Construct a new Time Planner:: Time Planner object. Subclassed from virtual planner object. considers time to
- * interception wwhen weighing path segments
- *
- */
 TimePlanner::TimePlanner()
 {
 }
 
-/**
- * @brief Destroy the Time Planner:: Time Planner object
- *
- */
 TimePlanner::~TimePlanner()
 {
 }
 
-/**
- * @brief Take a vector of aircraft where the friendly aircraft is in the first position and create a cost function to
- * determine the most efficient bogie to pursue based on time to interception.
- *
- * @param aircraft - vector of aircraft to be considered. the first aircraft in the vector should be the friendly
- * aircraft. any aircraft after will be considered to be bogies
- */
 void TimePlanner::plan(std::vector<Aircraft> aircraft)
 {
   std::map<double, int> weighted_map;
