@@ -1,0 +1,71 @@
+
+/*!
+
+*/
+
+// without this gap between two doxygen definition, the last group does not get
+// populated properly for some reason.
+
+/*!
+@mainpage Assignment 3 - Threading, Synchronisation and Data Integrity
+
+This program is designed to implement the tasks as outlined in the Programming for Mechatronic Systems Assignment 3. \n
+
+@section abstract Abstract
+@subsection planner Planner
+Planner is an abstract trajectory planning class. It is designed to be the base for multiple possible planners depending on the desired method for weighting. Currently only the TimePlanner has been implemented
+@subsubsection timeplanner TimePlanner
+TimePlanner is a trajectory planning class derived from Planner that will calculate the most efficient bogie to pursue based on time to interception. Internally the class will predict where the bogies will be at the time of interception when the friendly is moving at maximum velocity for interception. Poses are pushed into a getable vector that contains the friendly pose then bogie poses in descending order of efficiency
+
+@subsection pathtracker PathTracker
+PathTracker is an abstract class for implementing path tracking algorthims. Currently only pure pursuit has been implemented.
+@subsubsection purepursuit PurePursuit
+PurePursuit is subclassed from PathTracker. Pure pursuit tracks a linear path by first checking for a point along the path using the interception of a certain look ahead distance away. If the angle error and if it is above a specified threshold then the aircraft will turn on the spot until within acceptable bounds. after this angular and linear velocities can be related through a desired curvature to follow along the path.
+@subsection estimator Estimator
+The Estimator class is responsible for trianglulating bogies within a global space. It will compare positions over seperate timesteps by creating line segments. These line segments will be tested based on length and gradient to determine if line segments were created by the same bogie.
+@subsection dataupdater DataUpdater
+The DataUpdater class is responsible for interfacing directly with a simulator to obtain data samples and handle removing obselete data in a thread safe manor.
+@subsection controller Controller
+The Controller class creates instances of the aformentioned clases in order to plan and enact interception of the friendly aircaft with bogies.
+
+@section classlist Class List
+Planner \n
+TimePlanner \n
+PathTracker \n
+PurePursuit \n
+Estimator \n
+DataUpdater \n
+Controller \n
+@section Usage Using the program
+@subsection Building  Buildng the project
+When in the root directory of the assignment create a build directory 
+    \verbatim
+mkdir build
+    \endverbatim
+Now that the directory has been created chnge into it
+    \verbatim
+cd build
+    \endverbatim
+Finally, configure cmake to build the project.
+    \verbatim
+cmake ../src
+    \endverbatim
+Now whenever you are in the build directory you can run the following to build the project
+    \verbatim
+make
+    \endverbatim
+@subsection Running Running the project
+After completing "Building the project" you can use the following command to run the most recent build of the project:
+    \verbatim
+./a3_simulator
+    \endverbatim
+The unit test suite for this project can be run by
+    \verbatim
+./estimatorTests
+    \endverbatim
+    
+Lucien Morey
+12904090
+27/5/2020
+
+*/
