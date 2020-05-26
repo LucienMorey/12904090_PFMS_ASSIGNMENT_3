@@ -14,3 +14,6 @@ ipch/
 
 # vscode files
 .vscode/
+
+# doxygen files
+html/
