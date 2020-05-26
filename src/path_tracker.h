@@ -3,13 +3,6 @@
 
 #include "types.h"
 
-struct Twist_t
-{
-  double vX;
-  double vY;
-  double vZ;
-};
-
 class PathTracker
 {
 protected:
